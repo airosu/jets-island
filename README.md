@@ -39,3 +39,39 @@ Depending on your needs, you may need to use an older node version (e.g. if you 
 ##### "engines" field to package.json
 
 Add the following engine to the package.json file; with this engine locking in place, if someone tries to run 'npm install', which could create a package.lock file and cause conflicts, an error will be thrown.
+
+### Eslint
+
+By default, eslint also come preconfigured in the next app, so you can already run `yarn lint` and it will work, but we do want to add more configurations to make it a bit more strict.
+
+The .eslint.json file already extends next/core-web-vitals, we will turn this into an array and add next and eslint/recommended
+
+```
+{
+  "extends": [
+    "next",
+    "next/core-web-vitals",
+    "eslint:recommended"
+  ]
+}
+```
+
+When using react version 17 or newer, the React object is global, so you no longer need to import it in the scope of your components; to tell the linter that it does not need to warn us that we are using a variable that is not defined, we will add React it to the "globals" key:
+
+```
+{
+  "globals": {
+    "React": "readonly"
+  }
+}
+```
+
+Lastly, we will add an entry for rules, where we can manually turn on/off different rules we like / don't like. For example, we can set the no-unused-vars to 2 (0 = ok, 1 = warning, 2 = error) and make it ignore variables prefixed with "\_":
+
+```
+{
+  "rules": {
+    "no-unused-vars": [2, { "args": "after-used", "argsIgnorePattern": "^_" }]
+  }
+}
+```
