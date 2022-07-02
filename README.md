@@ -66,12 +66,89 @@ When using react version 17 or newer, the React object is global, so you no long
 }
 ```
 
-Lastly, we will add an entry for rules, where we can manually turn on/off different rules we like / don't like. For example, we can set the no-unused-vars to 2 (0 = ok, 1 = warning, 2 = error) and make it ignore variables prefixed with "\_":
+Lastly, we will add an entry for rules, where we can manually turn on/off different rules we like / don't like. For example, we can set the no-unused-vars to X (0 = ok, 1 = warning, 2 = error) and make it ignore variables prefixed with "\_":
 
 ```
 {
   "rules": {
-    "no-unused-vars": [2, { "args": "after-used", "argsIgnorePattern": "^_" }]
+    "no-unused-vars": [1, { "args": "after-used", "argsIgnorePattern": "^_" }]
   }
+}
+```
+
+### Prettier
+
+For code formatting, we will install prettier as a dev dependency.
+
+```
+yarn add -D prettier
+```
+
+With VS Code it is also highly recommended to use the prettier extension: https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode, which will allow your editor to automatically format the code (e.g. on save), instead of relying on the command line tool.
+
+##### .prettierignore
+
+Used to set patterns of files and folders that we do not prettier to format:
+
+```
+.yarn
+.next
+dist
+node_modules
+```
+
+##### .prettierrc
+
+Can also be named .prettierrc.json, used to create rules for formatting code. Like thie .prettierignore, this file will also be used by both the "prettier" command, and the vs code plugin.
+
+```
+{
+  "trailingComma": "all",
+  "tabWidth": 4,
+  "semi": false,
+  "singleQuote": true,
+  "printWidth": 120,
+  "overrides": [
+    {
+      "files": ["*.json", ".prettierrc"],
+      "options": {
+        "tabWidth": 2
+      }
+    },
+    {
+      "files": ["paths.ts", "apis.ts", "urls.ts"],
+      "options": {
+        "printWidth": 140
+      }
+    }
+  ]
+}
+```
+
+##### Add command to package.json
+
+Adding amd running this script to the package.json file will enforce the code formatting rules (.prettierrc) on all files, except the ignored ones (.prettierignore). The --write flag is used to also save the files after changing them, and the . means to run in the whole project directory:
+
+```
+{
+  "scripts": {
+    "prettier": "prettier --write ."
+  }
+}
+```
+
+##### Personal settings.json file
+
+I presonally have this configuration in my settings.json file, I prefer to only format on save and not on paste/type, and I also use a plugin called "Formatting Toggle" https://marketplace.visualstudio.com/items?itemName=tombonnike.vscode-status-bar-format-toggle, for situations where I need to turn off formatOnX (only the values in "formattingToggle.affects" will be affected, formatOnSave in my case as it is the only one that is't always set to false). Setting "prettier.requireConfig" to true will also only format projects that have a .prettierrc file, and not just everything.
+
+```
+{
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.formatOnSave": true,
+  "editor.formatOnPaste": false,
+  "editor.formatOnType": false,
+  "formattingToggle.affects": ["formatOnSave"],
+  "prettier.requireConfig": false, // Only format projects with Prettier config file
+  "editor.tabSize": 4, // In sync with value from .prittierrc file
 }
 ```
