@@ -197,10 +197,17 @@ When other people clone the project and run yarn install, this script it will al
 
 #### Debugging:
 
-If after uninstalling husky, hooks in .git/hooks/ aren't working. Run:
+Check that git config core.hooksPath returns .husky (or your custom hooks directory):
 
 ```
-git config --unset core.hooksPath
+git config core.hooksPath
+```
+
+Update git version:
+
+```
+git --version
+git update-git-for-windows
 ```
 
 ## Folder Structure
