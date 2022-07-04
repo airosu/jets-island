@@ -169,6 +169,8 @@ Then, we need to initialize it. Running the husky install command will generate 
 npx husky install
 ```
 
+!IMPORTANT! When creating a hook for the first time, it is highly recommended to use the cli commands (e.g. npx husky add...), as manually creating / copying the files can result in git related errors
+
 ##### pre-commit hook
 
 To create a hook that runs each time we commit to the project, we need to add to "pre-commit"; here, we can add the "yarn lint" script to make sure that there are no linter errors before commiting
@@ -213,6 +215,7 @@ git update-git-for-windows
 ##### Workaround for Windows 10, Git Bash and Yarn
 
 Git hooks may fail when using Yarn on Windows with Git Bash (stdin is not a tty). If you have users on Windows, it's highly recommended to add the following workaround.
+https://typicode.github.io/husky/#/?id=yarn-on-windows
 
 1. Create .husky/common.sh:
 
@@ -236,6 +239,77 @@ fi
 
 yarn ...
 ```
+
+### Commit messages linter
+
+To make sure commit messages follow a convention, we can add commitlint. First, install as dev dependencies:
+
+```
+yarn add -D @commitlint/config-conventional
+yarn add -D @commitlint/cli
+```
+
+In order to customise this linter we need to create a file named `commitlint.config.js`. This file is not necessary, or if you do use it it's usually enough just to extend @commitlint/config-conventional, however for this repo we will also manually add all the rules that come in from @commitlint/config-conventional, just to see what they are, and to have a clear list of all prefixes allowed:
+
+```
+module.exports = {
+    extends: ['@commitlint/config-conventional'],
+    rules: {
+        'body-leading-blank': [1, 'always'],
+        'body-max-line-length': [2, 'always', 100],
+        'footer-leading-blank': [1, 'always'],
+        'footer-max-line-length': [2, 'always', 100],
+        'header-max-length': [2, 'always', 100],
+        'scope-case': [2, 'always', 'lower-case'],
+        'subject-case': [2, 'never', ['sentence-case', 'start-case', 'pascal-case', 'upper-case']],
+        'subject-empty': [2, 'never'],
+        'subject-full-stop': [2, 'never', '.'],
+        'type-case': [2, 'always', 'lower-case'],
+        'type-empty': [2, 'never'],
+        'type-enum': [
+            2,
+            'always',
+            [
+                'build',
+                'chore',
+                'ci',
+                'docs',
+                'feat',
+                'fix',
+                'perf',
+                'refactor',
+                'revert',
+                'style',
+                'test',
+                'translation',
+                'security',
+                'changeset',
+            ],
+        ],
+    },
+}
+```
+
+Lastly, in order for it to actually work we need to enavble it with husky:
+
+```
+npx husky add .husky/commit-msg 'npx --no -- commitlint --edit "$1"'
+```
+
+```
+# Sometimes above command doesn't work in some command interpreters
+# You can try other commands below to write npx --no -- commitlint --edit $1
+# in the commit-msg file.
+npx husky add .husky/commit-msg \"npx --no -- commitlint --edit '$1'\"
+# or
+npx husky add .husky/commit-msg "npx --no -- commitlint --edit $1"
+```
+
+Commit message convention:
+
+-   https://www.conventionalcommits.org/en/v1.0.0/#specification
+-   https://dev.to/i5han3/git-commit-message-convention-that-you-can-follow-1709
+-   https://github.com/conventional-changelog/commitlint/#what-is-commitlint
 
 ## Folder Structure
 
