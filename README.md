@@ -210,6 +210,33 @@ git --version
 git update-git-for-windows
 ```
 
+##### Workaround for Windows 10, Git Bash and Yarn
+
+Git hooks may fail when using Yarn on Windows with Git Bash (stdin is not a tty). If you have users on Windows, it's highly recommended to add the following workaround.
+
+1. Create .husky/common.sh:
+
+```
+command_exists () {
+  command -v "$1" >/dev/null 2>&1
+}
+
+# Workaround for Windows 10, Git Bash and Yarn
+if command_exists winpty && test -t 1; then
+  exec < /dev/tty
+fi
+```
+
+2. Source it in in places where Yarn is used to run commands:
+
+```
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+. "$(dirname -- "$0")/common.sh"
+
+yarn ...
+```
+
 ## Folder Structure
 
 By default, the next app will not have a `src` folder, and the `pages` folder that it comes bundled with by default is placed at the root level. You can create a src folder to group your files (components, styles, types, utils, hooks, etc), and next also supports adding the pages folder here, but remember to remove it from the root level, so it's not duplicated; in case both `pages` and `src/pages` exist, the one from src will be ignored.
