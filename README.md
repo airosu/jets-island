@@ -152,3 +152,9 @@ I presonally have this configuration in my settings.json file, I prefer to only 
   "editor.tabSize": 4, // In sync with value from .prittierrc file
 }
 ```
+
+## Folder Structure
+
+By default, the next app will not have a `src` folder, and the `pages` folder that it comes bundled with by default is placed at the root level. You can create a src folder to group your files (components, styles, types, utils, hooks, etc), and next also supports adding the pages folder here, but remember to remove it from the root level, so it's not duplicated; in case both `pages` and `src/pages` exist, the one from src will be ignored.
+
+The `public` folder however can only be placed at the root level: https://nextjs.org/docs/advanced-features/src-directory
