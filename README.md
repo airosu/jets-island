@@ -153,6 +153,48 @@ I presonally have this configuration in my settings.json file, I prefer to only 
 }
 ```
 
+### Git hooks
+
+Git hooks are scripts that run at different stages of the git process (commit, push, etc.). If the scripts fail, the git action is not completd. For example, you can make sure that the linter will pass before finishing the commit, or that the app can be successfully built before pushing the code to remote.
+
+First, we need to install husky:
+
+```
+yarn add -D husky
+```
+
+Then, we need to initialize it. Running the husky install command will generate a .husky folder in our project; all scripts created here will be executed for all contributing developers:
+
+```
+npx husky install
+```
+
+##### pre-commit hook
+
+To create a hook that runs each time we commit to the project, we need to add to "pre-commit"; here, we can add the "yarn lint" script to make sure that there are no linter errors before commiting
+
+```
+npx husky add .husky/pre-commit "yarn lint"
+```
+
+##### pre-push hook
+
+To create a hook that runs each time we push to origin, we need to add to "pre-push"; here, er can add the "yarn build" script to make sure that the app can be successfully build before pushing.
+
+```
+npx husky add .husky/pre-push "yarn build"
+```
+
+##### prepare script
+
+The prepare script will also need to be added to package.json.
+
+When other people clone the project and run yarn install, this script it will also automatically install husky to make sure they all are making use of the git hooks.
+
+```
+"prepare": "husky install"
+```
+
 ## Folder Structure
 
 By default, the next app will not have a `src` folder, and the `pages` folder that it comes bundled with by default is placed at the root level. You can create a src folder to group your files (components, styles, types, utils, hooks, etc), and next also supports adding the pages folder here, but remember to remove it from the root level, so it's not duplicated; in case both `pages` and `src/pages` exist, the one from src will be ignored.
