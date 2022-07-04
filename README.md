@@ -311,6 +311,21 @@ Commit message convention:
 -   https://dev.to/i5han3/git-commit-message-convention-that-you-can-follow-1709
 -   https://github.com/conventional-changelog/commitlint/#what-is-commitlint
 
+### VS Code Settings
+
+Apart from our onw personal settgins.json file, we can also create one in our codebase (a project speciffic file) in which we can enforce some settings, that will override / take precedence over the globals; the biggest advantage is that other developers using VS Code will have the same settings:
+
+```
+{
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll": true,
+    "source.organizeImports": true
+  }
+}
+```
+
 ## Folder Structure
 
 By default, the next app will not have a `src` folder, and the `pages` folder that it comes bundled with by default is placed at the root level. You can create a src folder to group your files (components, styles, types, utils, hooks, etc), and next also supports adding the pages folder here, but remember to remove it from the root level, so it's not duplicated; in case both `pages` and `src/pages` exist, the one from src will be ignored.
