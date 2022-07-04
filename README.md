@@ -195,6 +195,14 @@ When other people clone the project and run yarn install, this script it will al
 "prepare": "husky install"
 ```
 
+#### Debugging:
+
+If after uninstalling husky, hooks in .git/hooks/ aren't working. Run:
+
+```
+git config --unset core.hooksPath
+```
+
 ## Folder Structure
 
 By default, the next app will not have a `src` folder, and the `pages` folder that it comes bundled with by default is placed at the root level. You can create a src folder to group your files (components, styles, types, utils, hooks, etc), and next also supports adding the pages folder here, but remember to remove it from the root level, so it's not duplicated; in case both `pages` and `src/pages` exist, the one from src will be ignored.
