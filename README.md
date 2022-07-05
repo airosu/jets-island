@@ -326,6 +326,71 @@ Apart from our onw personal settgins.json file, we can also create one in our co
 }
 ```
 
+### VS Code Debugger
+
+First, we create a file called "launch.json" in our .vscode directory, to enable launching in different kinds of debug modes. The content of this file is also provided by next.js: https://nextjs.org/docs/advanced-features/debugging
+
+These scripts can be found and ran from the "Run and Debug" tab in VS Code (ctrl + shift + d)
+
+```
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Next.js: debug server-side",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "npm run dev"
+    },
+    {
+      "name": "Next.js: debug client-side",
+      "type": "pwa-chrome",
+      "request": "launch",
+      "url": "http://localhost:3000"
+    },
+    {
+      "name": "Next.js: debug full stack",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "npm run dev",
+      "console": "integratedTerminal",
+      "serverReadyAction": {
+        "pattern": "started server on .+, url: (https?://.+)",
+        "uriFormat": "%s",
+        "action": "debugWithChrome"
+      }
+    }
+  ]
+}
+```
+
+In case of source map error, also add this line:
+
+```
+"resolveSourceMapLocations": ["${workspaceFolder}/**", "!**/node_modules/**"]
+```
+
+## ENABLE INSPECTING OF SERVER-SIDE LOGS IN THE BROWSER
+
+As also recommended by the next.js docs, automatic debugger for the dev environment can be added as welll, when running from the command line. This will enable you to see the server-side logs in the chrome developer tools.
+
+First, install cross env to set environment variables the same way on linux / mac / windows on the comand line:
+
+```
+yarn add -D cross-env
+```
+
+Then, you can either update your dev script in package json, or create a separate one:
+
+```
+{
+    "scripts": {
+    "dev": "next dev",
+    "dev:debug": "cross-env NODE_OPTIONS='--inspect' next dev",
+  }
+}
+```
+
 ## Folder Structure
 
 By default, the next app will not have a `src` folder, and the `pages` folder that it comes bundled with by default is placed at the root level. You can create a src folder to group your files (components, styles, types, utils, hooks, etc), and next also supports adding the pages folder here, but remember to remove it from the root level, so it's not duplicated; in case both `pages` and `src/pages` exist, the one from src will be ignored.
