@@ -466,3 +466,95 @@ src/
 ```
 
 ## Storybook
+
+We will not actually add storybook as a dependency, just because it installs so many different things, and creates so many configs and files within the project. We will run it with npx. Make sure to also add the --builder webpack5 because (at least at the time i am writing this) storybook init defaults to webpack 4 instead of 5. After running this command you will see a .storybook folder has been created, along with a `stories` folder in src:
+
+```
+npx sb init --builder webpack5
+```
+
+Adding eslint rule: during installation it will ask you if you want to update .eslintrc; it may throw an error (seems it does not like the .json extension), but this can manually be added: "plugin:storybook/recommended" -> recommended eslint config for sb. We woll also add the overrides section (and add the thing that is mentioned in storybook documentation, not sure what it does):
+
+```
+{
+  "extends": [
+    "plugin:storybook/recommended",
+    "next",
+    "next/core-web-vitals",
+    "eslint:recommended"
+  ]
+  "overrides": [
+    {
+      "files": ["*.stories.@(ts|tsx|js|jsx|mjs|cjs)"],
+      "rules": {
+        // example of overriding a rule
+        "storybook/hierarchy-separator": "error"
+      }
+    }
+  ]
+}
+```
+
+We will also add webpack 5 resolutions to our package.json; to ensure that storybook and any other tools are using version 5 of webpack, whenever they are importing webpack (our project itself does not have a dependency on webpack, we do not need to have it in our dev dependencies, BUT the tools that we are using we want to make sure that are using webpack version 5)
+
+```
+{
+  "resolutions": {
+    "webpack": "^5"
+  }
+}
+```
+
+Now, because we added this resolution, we need to run yarn install again, to make sure all webpack dependendcies are updated:
+
+```
+yarn install
+```
+
+We will need to check the `.storybook/main.js` file, to make sure that all \*.stories.ts files are taken from the src folder (should be done automatically, assuming the src folder existed before installing storybook, otherwise it may need to pe updated manually), and also specify the static assets directory:
+
+```
+staticDirs: ['../public']
+```
+
+Lastly, in the `.storybook/preview.js` we also need to tell storybook how to work with next.js <Image /> component:
+
+```
+const OriginalNextImage = NextImage.default
+
+Object.defineProperty(NextImage, 'default', {
+    configurable: true,
+    value: (props) => <OriginalNextImage {...props} unoptimized />,
+})
+```
+
+!ERROR! Because webpack 5 is amazing, you may end upt with an error like this one:
+
+```
+    BREAKING CHANGE: webpack < 5 used to include polyfills for node.js core modules by default.
+    This is no longer the case. Verify if you need this module and configure a polyfill for it.
+
+    If you want to include a polyfill, you need to:
+        - add a fallback 'resolve.fallback: { "util": require.resolve("util/") }'
+        - install 'util'
+    If you don't want to include a polyfill, you can use an empty module like this:
+        resolve.fallback: { "util": false }
+```
+
+To fix it, do exaclty what it sais: create a webpack.config.js file, and add this to it:
+
+```
+module.exports = {
+    resolve: {
+        fallback: {
+            util: require.resolve('util/'),
+        },
+    },
+}
+```
+
+It seems that making storybook to work is a fun task, especially from one version to another. Have fun!
+
+```
+yarn run storybook
+```
