@@ -370,7 +370,7 @@ In case of source map error, also add this line:
 "resolveSourceMapLocations": ["${workspaceFolder}/**", "!**/node_modules/**"]
 ```
 
-## ENABLE INSPECTING OF SERVER-SIDE LOGS IN THE BROWSER
+### ENABLE INSPECTING OF SERVER-SIDE LOGS IN THE BROWSER
 
 As also recommended by the next.js docs, automatic debugger for the dev environment can be added as welll, when running from the command line. This will enable you to see the server-side logs in the chrome developer tools.
 
@@ -396,3 +396,73 @@ Then, you can either update your dev script in package json, or create a separat
 By default, the next app will not have a `src` folder, and the `pages` folder that it comes bundled with by default is placed at the root level. You can create a src folder to group your files (components, styles, types, utils, hooks, etc), and next also supports adding the pages folder here, but remember to remove it from the root level, so it's not duplicated; in case both `pages` and `src/pages` exist, the one from src will be ignored.
 
 The `public` folder however can only be placed at the root level: https://nextjs.org/docs/advanced-features/src-directory
+
+##### Grouping folders and files
+
+This is subject to change:
+
+```
+public/
+src/
+|
+| - pages/
+|   | - api/
+|       | - hello.ts
+|       | - users.ts
+|   | - account/
+|           | - dashboard/
+|               | - index.ts
+|       | - index.ts
+|   | - cart/
+|       | - index.ts
+|   | - about/
+|       | - index.ts
+|   | - _app.tsx
+|   | - index.tsx
+|   …
+|
+| - components/
+|   |- page-components/
+|       | - account/
+|           | - AccountNavigation/
+|               | - AccountNavigation.tsx
+|               | - AccountNavigation.constants.ts
+|               | - AccountNavigation.types.ts
+|               | - AccountNavigation.mocks.ts
+|               | - AccountNavigation.utils.ts
+|               | - AccountNavigation.test.ts
+|               | - AccountNavigation.stories.ts
+|               | - index.ts
+|               …
+|           | - AccountModal/
+|           | - Sidebar/
+|           | - Dashboard/
+|           | - PaymentMethods/
+|       | - Admin/
+|           | - AdminActionsBar/
+|           | - AdminModal/
+|   |- elements/
+|       |- Button/
+|       |- Modal/
+|       |- Typography/
+|       |- Toast/
+|       | …
+|   |- modules/
+|       |- Header/
+|       |- Footer/
+|   |- templates/
+|       |- BaseTemplate/
+|           |- BaseTemplate.tsx
+|           |- BaseTemplate.constants.tsx
+|           |- BaseTemplate.types.tsx
+|           |- BaseTemplate.constants.tsx
+|           |- BaseTemplate.constants.tsx
+|           …
+|
+| - styles/
+| - hooks/
+| - utils/
+| - store/
+```
+
+## Storybook
