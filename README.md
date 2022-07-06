@@ -179,6 +179,17 @@ To create a hook that runs each time we commit to the project, we need to add to
 npx husky add .husky/pre-commit "yarn lint"
 ```
 
+You can also add a rule to prevent commit on the main / master branch directly:
+
+```
+branch="$(git rev-parse --abbrev-ref HEAD)"
+
+if [ "$branch" = "master" ]; then
+  echo "You can't commit directly to master branch"
+  exit 1
+fi
+```
+
 ##### pre-push hook
 
 To create a hook that runs each time we push to origin, we need to add to "pre-push"; here, er can add the "yarn build" script to make sure that the app can be successfully build before pushing.
