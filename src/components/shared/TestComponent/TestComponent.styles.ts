@@ -1,5 +1,5 @@
 import styled from '@emotion/styled'
 
-const StyledDiv = styled.div`
+export const StyledDiv = styled.div`
     color: red;
 `

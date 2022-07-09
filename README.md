@@ -574,7 +574,9 @@ yarn run storybook
 
 ## Configure TypeScript
 
-There are multiple configs you can add, please consult tsconfig.json in this project for a few examples (all are documented here: https://www.typescriptlang.org/tsconfig)
+There are multiple configs you can add, please consult tsconfig.json in this project for a few examples (all are documented here: https://www.typescriptlang.org/tsconfig).
+
+Please note that these configs are taken into account when building / exporting the app, so it is a good idea to keep them in sync with the eslint settings.
 
 ##### Absolute Path
 
