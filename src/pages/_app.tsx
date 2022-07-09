@@ -5,3 +5,5 @@ function MyApp({ Component, pageProps }: AppProps) {
 }
 
 export default MyApp
+
+// TODO: Add linter rules for: import merging, import ordering, automatically import as type

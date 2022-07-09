@@ -56,6 +56,8 @@ The .eslint.json file already extends next/core-web-vitals, we will turn this in
 }
 ```
 
+!!!NOTE!!! DO NOT ADD PRETTIER TO THIS LIST! I do not think you need it and it will make the rules not work.
+
 When using react version 17 or newer, the React object is global, so you no longer need to import it in the scope of your components; to tell the linter that it does not need to warn us that we are using a variable that is not defined, we will add React it to the "globals" key:
 
 ```
@@ -568,4 +570,94 @@ It seems that making storybook to work is a fun task, especially from one versio
 
 ```
 yarn run storybook
+```
+
+## Configure TypeScript
+
+There are multiple configs you can add, please consult tsconfig.json in this project for a few examples (all are documented here: https://www.typescriptlang.org/tsconfig)
+
+##### Absolute Path
+
+In order to create a base url, to import for example from `components/MyComponent` directly, instead of using `../../../components/MyComponent`, you can add "src" to the "baseUrl" in tsconfig compiler options; another option would be to create a separate file, e.g. tsconfig.paths.json and then add "extends": "./tsconfig.paths.json" in your main tsconfig:
+
+```
+{
+  "compilerOptions": {
+    "baseUrl": "src"
+  }
+}
+```
+
+##### Import Aliases
+
+You can also create aliases for speciffic paths, for example `@public` or just `public` to import from outside of the baseUrl, or for deeply nested paths, etc. Just add them to the "paths" object:
+
+```
+{
+  "compilerOptions": {
+    "paths": {
+      "public": ["./public"]
+    }
+  }
+}
+
+```
+
+## Material UI / Emotion
+
+In order for us to use material UI (version 5 or newer), we need to also use either emotion or styled components, as specified in: https://mui.com/material-ui/getting-started/installation/.
+
+We will be using emotion (@emotion/react and @emotion/styled for styled components) instead of styled-components (@mui/styled-engine), mainly because of an issue with SSR, https://github.com/mui/material-ui/issues/29742, also mentioned on the MUI website: https://mui.com/material-ui/guides/styled-engine/.
+
+First, install the required packages as normal dependencies:
+
+```
+yarn add @mui/material
+yarn add @emotion/react
+yarn add @emotion/styled
+```
+
+Also install the @emotion/eslint-plugin as a dev dependency:
+
+```
+yarn add -D @emotion/eslint-plugin
+```
+
+Now, add the following plugin and rules to the .eslintrc.json file (for short, they will throw errors if you are trying to import something from the wrong library and forces all styles to be written as strings, instead of also allowing objects) - https://github.com/emotion-js/emotion/tree/main/packages/eslint-plugin/docs/rules
+
+When adding css directly on a div, e.g. `<div css={}/>`, you need to add this /\*_ @jsx jsx _/ at the top of the file, imported from '@emotion/react'. This comment (pragma) tells babel to convert jsx to calls to a function called jsx instead of React.createElement. The linter rule "@emotion/jsx-import": "error" + prettier will automatically import and add this if it is missing.
+
+```
+{
+  "plugins": ["@emotion"],
+  "rules": {
+    "@emotion/jsx-import": "error",
+    "@emotion/no-vanilla": "error",
+    "@emotion/import-from-emotion": "error",
+    "@emotion/styled-import": "error",
+    "@emotion/syntax-preference": [2, "string"]
+  }
+}
+```
+
+Failed to compile - SyntaxError: pragma and pragmaFrag cannot be set when runtime is automatic.
+When you see this error, it is because React 17 introduced a new version of JSX which has two runtime options: classic and autoamtic. The fix for this (at least temporary) is to add another pragma to set the JSX runtime to classic - https://github.com/vercel/next.js/discussions/18440#discussioncomment-133128-permalink
+
+```
+
+```
+
+According to https://emotion.sh/docs/@emotion/babel-plugin, babel is also highly recommended, as it provides minification, dead code elimination etc., so we will also add it to our project:
+
+```
+yarn add -D @emotion/babel-plugin
+```
+
+Create a `.babelrc` file. First, add the "next/babel" preset made available from next (https://nextjs.org/docs/advanced-features/customizing-babel-config), and also the @emotion plugin. NOTE: In older emoiton versions, it was mentioned that @emotion must be the first plugin in the plugins array.
+
+```
+{
+  "presets": ["next/babel"],
+  "plugins": ["@emotion"]
+}
 ```
