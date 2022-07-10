@@ -68,7 +68,7 @@ When using react version 17 or newer, the React object is global, so you no long
 }
 ```
 
-Lastly, we will add an entry for rules, where we can manually turn on/off different rules we like / don't like. For example, we can set the no-unused-vars to X (0 = ok, 1 = warning, 2 = error) and make it ignore variables prefixed with "\_":
+Lastly, we will add an entry for rules, where we can manually turn on/off different rules we like / don't like. For example, we can set the no-unused-vars to X (0 = ok, 1 = warning, 2 = error) and make it ignore variables prefixed with "\_". All possible rules are documented here: https://nextjs.org/docs/basic-features/eslint
 
 ```
 {
@@ -607,7 +607,7 @@ You can also create aliases for speciffic paths, for example `@public` or just `
 
 ## Material UI / Emotion
 
-In order for us to use material UI (version 5 or newer), we need to also use either emotion or styled components, as specified in: https://mui.com/material-ui/getting-started/installation/.
+In order for us to use material UI (version 5 or newer), we need to also use either emotion or styled components, as specified in: https://mui.com/material-ui/getting-started/installation/. The reason is because in v5^ material ui was reworked a bit, and it now uses one of the above as it's styling engine.
 
 We will be using emotion (@emotion/react and @emotion/styled for styled components) instead of styled-components (@mui/styled-engine), mainly because of an issue with SSR, https://github.com/mui/material-ui/issues/29742, also mentioned on the MUI website: https://mui.com/material-ui/guides/styled-engine/.
 
@@ -617,6 +617,13 @@ First, install the required packages as normal dependencies:
 yarn add @mui/material
 yarn add @emotion/react
 yarn add @emotion/styled
+```
+
+While we're at it, we can also install @emotion/server, in order to server side render these emotion components, and also the material ui icons: https://fonts.google.com/icons?icon.set=Material+Icons
+
+```
+yarn add @emotion/server
+yarn add @mui/icons-material
 ```
 
 Also install the @emotion/eslint-plugin as a dev dependency:
@@ -663,3 +670,48 @@ Create a `.babelrc` file. First, add the "next/babel" preset made available from
   "plugins": ["@emotion"]
 }
 ```
+
+What we need to do now is we are going to have to create an emotion cache for our server side rendered emotion components. The `createCache` can also accept other configs than key, (https://emotion.sh/docs/@emotion/cache), like `prepend: true`, which will move the MUI styles to the top of the <head> so they are loaded first; you can also set this to false in case you are also using other styling solutions, such as css modules.
+
+```
+import createCache from '@emotion/cache'
+
+export const createEmotionCache = () => {
+    return createCache({ key: 'css' })
+}
+```
+
+Now, let's create the material ui theme that we will be using in our application. Create a theme.cs in the styles folder:
+
+```
+import { createTheme } from '@mui/material/styles'
+import { red } from '@mui/material/colors'
+
+export const theme = createTheme({
+    palette: {
+        primary: {
+            main: '#556cd6',
+        },
+        secondary: {
+            main: '#19857b',
+        },
+        error: {
+            main: red.A400,
+        },
+    },
+})
+```
+
+In order to get material ui to server side render consistently with next.js, you actually have to create a custom \_document.tsx file (to override the default one form next); this is needed so you do not get a flickering effect with the server side rendered components. This is taken directly from the mui/material-ui examples: https://github.com/mui/material-ui/blob/master/examples/nextjs-with-typescript/pages/_document.tsx. More info on extending the \_document.tsx file can also be found in next.js official examples: https://nextjs.org/docs/advanced-features/custom-document
+
+TODO: Investigate if the roboto font family + material UI icons need to be added in the head or if they can be installed as dependencies in the project.
+
+The next step is to also update the \_app.tsx file, to use the material ui themes etc.
+
+NOTE: The \_app.tsx file will also include the <Head> tag with <meta name="viewport">, which is better kept here and not in the \_document.tsx file, since it can cause some issues: https://stackoverflow.com/questions/65832820/next-js-viewport-meta-tags-should-not-be-used-in-document-jss-head, nextjs: https://nextjs.org/docs/messages/no-document-viewport-meta
+
+### Examples
+
+-   https://github.com/mui/material-ui/tree/master/examples/nextjs
+-   https://github.com/leoroese/nextjs-materialui-v5-tutorial/tree/emotion
+-   https://github.com/mayank7924/nextjs-with-mui
