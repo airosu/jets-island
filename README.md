@@ -56,6 +56,8 @@ The .eslint.json file already extends next/core-web-vitals, we will turn this in
 }
 ```
 
+!!!NOTE!!! DO NOT ADD PRETTIER TO THIS LIST! I do not think you need it and it will make the rules not work.
+
 When using react version 17 or newer, the React object is global, so you no longer need to import it in the scope of your components; to tell the linter that it does not need to warn us that we are using a variable that is not defined, we will add React it to the "globals" key:
 
 ```
@@ -66,7 +68,7 @@ When using react version 17 or newer, the React object is global, so you no long
 }
 ```
 
-Lastly, we will add an entry for rules, where we can manually turn on/off different rules we like / don't like. For example, we can set the no-unused-vars to X (0 = ok, 1 = warning, 2 = error) and make it ignore variables prefixed with "\_":
+Lastly, we will add an entry for rules, where we can manually turn on/off different rules we like / don't like. For example, we can set the no-unused-vars to X (0 = ok, 1 = warning, 2 = error) and make it ignore variables prefixed with "\_". All possible rules are documented here: https://nextjs.org/docs/basic-features/eslint
 
 ```
 {
@@ -569,3 +571,147 @@ It seems that making storybook to work is a fun task, especially from one versio
 ```
 yarn run storybook
 ```
+
+## Configure TypeScript
+
+There are multiple configs you can add, please consult tsconfig.json in this project for a few examples (all are documented here: https://www.typescriptlang.org/tsconfig).
+
+Please note that these configs are taken into account when building / exporting the app, so it is a good idea to keep them in sync with the eslint settings.
+
+##### Absolute Path
+
+In order to create a base url, to import for example from `components/MyComponent` directly, instead of using `../../../components/MyComponent`, you can add "src" to the "baseUrl" in tsconfig compiler options; another option would be to create a separate file, e.g. tsconfig.paths.json and then add "extends": "./tsconfig.paths.json" in your main tsconfig:
+
+```
+{
+  "compilerOptions": {
+    "baseUrl": "src"
+  }
+}
+```
+
+##### Import Aliases
+
+You can also create aliases for speciffic paths, for example `@public` or just `public` to import from outside of the baseUrl, or for deeply nested paths, etc. Just add them to the "paths" object:
+
+```
+{
+  "compilerOptions": {
+    "paths": {
+      "public": ["./public"]
+    }
+  }
+}
+
+```
+
+## Material UI / Emotion
+
+In order for us to use material UI (version 5 or newer), we need to also use either emotion or styled components, as specified in: https://mui.com/material-ui/getting-started/installation/. The reason is because in v5^ material ui was reworked a bit, and it now uses one of the above as it's styling engine.
+
+We will be using emotion (@emotion/react and @emotion/styled for styled components) instead of styled-components (@mui/styled-engine), mainly because of an issue with SSR, https://github.com/mui/material-ui/issues/29742, also mentioned on the MUI website: https://mui.com/material-ui/guides/styled-engine/.
+
+First, install the required packages as normal dependencies:
+
+```
+yarn add @mui/material
+yarn add @emotion/react
+yarn add @emotion/styled
+```
+
+While we're at it, we can also install @emotion/server, in order to server side render these emotion components, and also the material ui icons: https://fonts.google.com/icons?icon.set=Material+Icons
+
+```
+yarn add @emotion/server
+yarn add @mui/icons-material
+```
+
+Also install the @emotion/eslint-plugin as a dev dependency:
+
+```
+yarn add -D @emotion/eslint-plugin
+```
+
+Now, add the following plugin and rules to the .eslintrc.json file (for short, they will throw errors if you are trying to import something from the wrong library and forces all styles to be written as strings, instead of also allowing objects) - https://github.com/emotion-js/emotion/tree/main/packages/eslint-plugin/docs/rules
+
+When adding css directly on a div, e.g. `<div css={}/>`, you need to add this /\*_ @jsx jsx _/ at the top of the file, imported from '@emotion/react'. This comment (pragma) tells babel to convert jsx to calls to a function called jsx instead of React.createElement. The linter rule "@emotion/jsx-import": "error" + prettier will automatically import and add this if it is missing.
+
+```
+{
+  "plugins": ["@emotion"],
+  "rules": {
+    "@emotion/jsx-import": "error",
+    "@emotion/no-vanilla": "error",
+    "@emotion/import-from-emotion": "error",
+    "@emotion/styled-import": "error",
+    "@emotion/syntax-preference": [2, "string"]
+  }
+}
+```
+
+Failed to compile - SyntaxError: pragma and pragmaFrag cannot be set when runtime is automatic.
+When you see this error, it is because React 17 introduced a new version of JSX which has two runtime options: classic and autoamtic. The fix for this (at least temporary) is to add another pragma to set the JSX runtime to classic - https://github.com/vercel/next.js/discussions/18440#discussioncomment-133128-permalink
+
+```
+
+```
+
+According to https://emotion.sh/docs/@emotion/babel-plugin, babel is also highly recommended, as it provides minification, dead code elimination etc., so we will also add it to our project:
+
+```
+yarn add -D @emotion/babel-plugin
+```
+
+Create a `.babelrc` file. First, add the "next/babel" preset made available from next (https://nextjs.org/docs/advanced-features/customizing-babel-config), and also the @emotion plugin. NOTE: In older emoiton versions, it was mentioned that @emotion must be the first plugin in the plugins array.
+
+```
+{
+  "presets": ["next/babel"],
+  "plugins": ["@emotion"]
+}
+```
+
+What we need to do now is we are going to have to create an emotion cache for our server side rendered emotion components. The `createCache` can also accept other configs than key, (https://emotion.sh/docs/@emotion/cache), like `prepend: true`, which will move the MUI styles to the top of the <head> so they are loaded first; you can also set this to false in case you are also using other styling solutions, such as css modules.
+
+```
+import createCache from '@emotion/cache'
+
+export const createEmotionCache = () => {
+    return createCache({ key: 'css' })
+}
+```
+
+Now, let's create the material ui theme that we will be using in our application. Create a theme.cs in the styles folder:
+
+```
+import { createTheme } from '@mui/material/styles'
+import { red } from '@mui/material/colors'
+
+export const theme = createTheme({
+    palette: {
+        primary: {
+            main: '#556cd6',
+        },
+        secondary: {
+            main: '#19857b',
+        },
+        error: {
+            main: red.A400,
+        },
+    },
+})
+```
+
+In order to get material ui to server side render consistently with next.js, you actually have to create a custom \_document.tsx file (to override the default one form next); this is needed so you do not get a flickering effect with the server side rendered components. This is taken directly from the mui/material-ui examples: https://github.com/mui/material-ui/blob/master/examples/nextjs-with-typescript/pages/_document.tsx. More info on extending the \_document.tsx file can also be found in next.js official examples: https://nextjs.org/docs/advanced-features/custom-document
+
+TODO: Investigate if the roboto font family + material UI icons need to be added in the head or if they can be installed as dependencies in the project.
+
+The next step is to also update the \_app.tsx file, to use the material ui themes etc.
+
+NOTE: The \_app.tsx file will also include the <Head> tag with <meta name="viewport">, which is better kept here and not in the \_document.tsx file, since it can cause some issues: https://stackoverflow.com/questions/65832820/next-js-viewport-meta-tags-should-not-be-used-in-document-jss-head, nextjs: https://nextjs.org/docs/messages/no-document-viewport-meta
+
+### Examples
+
+-   https://github.com/mui/material-ui/tree/master/examples/nextjs
+-   https://github.com/leoroese/nextjs-materialui-v5-tutorial/tree/emotion
+-   https://github.com/mayank7924/nextjs-with-mui
