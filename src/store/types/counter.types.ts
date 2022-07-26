@@ -1,4 +1,4 @@
-import { INCREMENT_COUNTER, DECREMENT_COUNTER, RESET_COUNTER } from 'redux/constants/counter.constants'
+import { INCREMENT_COUNTER, DECREMENT_COUNTER, RESET_COUNTER } from 'store/constants/counter.constants'
 
 export type CounterState = {
     value: number

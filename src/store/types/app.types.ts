@@ -1,7 +1,7 @@
 import { Dispatch } from 'redux'
 import { ThunkAction, ThunkDispatch } from 'redux-thunk'
-import { rootReducer } from 'redux/rootReducer'
-import { CounterAction } from 'redux/types/counter.types'
+import { rootReducer } from 'store/rootReducer'
+import { CounterAction } from 'store/types/counter.types'
 
 export type AppState = ReturnType<typeof rootReducer>
 export type GetAppState = () => AppState

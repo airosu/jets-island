@@ -10,7 +10,8 @@ Setetup steps for next js application from scratch and online business "Jet's Is
 -   Implement github actions (CI, cypress)
 -   Try / catch / finally fetch setloading in finally block
 -   Linter rule for import ordering
--   Linter rule for import type {} that is only used as type
+-   Linter rule for import type {} that is only used as type, import merging
+-   Customize the material ui theme + investigate if theme was correfctly added to emotion
 
 ## Architecture
 
@@ -731,15 +732,14 @@ NOTE: The \_app.tsx file will also include the <Head> tag with <meta name="viewp
 
 ## Redux store
 
-The setup for redux with next.js will be a bit different that with react, mainly because server side rendered pages need to have the store in sync with the client side store; what happens for short is that each time a new page is rendered on the server, next.js creates a new store for it, different from the store that exists on the client side; the problem is that the store on the server side page is not aware of the client side store, and the pros created during the server call will be lost. For this reason, we will use next-redux-wrapper, and will go into more details a bit later. For now, just install all needed dependencies:
+The setup for redux with next.js will be a bit different that with react, mainly because server side rendered pages need to have the store in sync with the client side store. What happens in short (ins SSR) is that everytime a request for a page is made, next.js creates a new page on the server side and send it back to the client => this means that the server is not aware of the client side store, so each time a new page is rendered on the server, next.js creates a new store for it, different from the store that exists on the client side; the problem is that the store on the server side page is not aware of the client side store, and the props created during the server call will be lost. For this reason, we will create a server side redux store (to be updated with fetched data), and use HYDRATE action from react-redux-wrapper to apply the new store values to the client store. We will go more in depth later, for now just install the dependencies:
 
 ```
 yarn add redux
 yarn add react-redux
 yarn add redux-thunk
 yarn add next-redux-wrapper
-
-@redux-devtools/extension
+yarn add @redux-devtools/extension
 ```
 
 Now create the initial folder structure in `src/store` with everything you need. A Basic Example:
@@ -768,3 +768,5 @@ redux/
 |- rootReducer.ts                   # Combined slices of state
 |– store.ts                         # Final store with middlewares, dev tools, logger, etc.
 ```
+
+### Other Examples

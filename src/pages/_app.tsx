@@ -30,6 +30,3 @@ export default function MyApp(props: MyAppProps) {
         </CacheProvider>
     )
 }
-
-// TODO: Add linter rules for: import merging, import ordering, automatically import as type
-// TODO: Customize the material ui theme + investigate if theme was correfctly added to emotion

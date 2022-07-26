@@ -1,8 +1,8 @@
 import { legacy_createStore, applyMiddleware } from 'redux'
 import thunk, { ThunkMiddleware } from 'redux-thunk'
 import { composeWithDevTools } from '@redux-devtools/extension'
-import { rootReducer } from 'redux/rootReducer'
-import { AppState, AppAction } from 'redux/types/app.types'
+import { rootReducer } from 'store/rootReducer'
+import { AppState, AppAction } from 'store/types/app.types'
 
 export const store = legacy_createStore(
     rootReducer,
