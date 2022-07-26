@@ -8,10 +8,10 @@
     "npm": "please-use-yarn"
   },
   "scripts": {
-    "dev": "next dev",
-    "dev:debug": "cross-env NODE_OPTIONS='--inspect' next dev",
+    "start": "next dev",
+    "start:debug": "cross-env NODE_OPTIONS='--inspect' next dev",
+    "start:prod": "next start",
     "build": "next build",
-    "start": "next start",
     "lint": "next lint",
     "prettier": "prettier --write .",
     "prepare": "husky install",
@@ -24,9 +24,14 @@
     "@emotion/styled": "^11.9.3",
     "@mui/icons-material": "^5.8.4",
     "@mui/material": "^5.8.7",
+    "@redux-devtools/extension": "^3.2.2",
     "next": "12.2.0",
+    "next-redux-wrapper": "^7.0.5",
     "react": "18.2.0",
     "react-dom": "18.2.0",
+    "react-redux": "^8.0.2",
+    "redux": "^4.2.0",
+    "redux-thunk": "^2.4.1",
     "util": "^0.12.4"
   },
   "devDependencies": {
