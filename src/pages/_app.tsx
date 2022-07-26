@@ -32,4 +32,4 @@ export default function MyApp(props: MyAppProps) {
 }
 
 // TODO: Add linter rules for: import merging, import ordering, automatically import as type
-// TODO: Customize the material ui theme + add it to emotion styled components
+// TODO: Customize the material ui theme + investigate if theme was correfctly added to emotion

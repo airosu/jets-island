@@ -2,6 +2,16 @@
 
 Setetup steps for next js application from scratch and online business "Jet's Island" presentation.
 
+### TODOs:
+
+-   Implement configurator download functionality - html2canvas
+-   Add contributing / style guide section in readme (e.g. onRestart vs handleRestart event handler naming) - use clean code repo as default
+-   Implement unittests with @testing-library/jest-dom/extend-expect and mock fetch library
+-   Implement github actions (CI, cypress)
+-   Try / catch / finally fetch setloading in finally block
+-   Linter rule for import ordering
+-   Linter rule for import type {} that is only used as type
+
 ## Architecture
 
 This section will include all steps and packages needed to setup the codebase.
@@ -478,6 +488,9 @@ src/
 | - store/
 ```
 
+-   lib - prmarily used for 3rd party libraries implementations (facade pattern)
+-   services - about integrating with an API; all services for calling an API
+
 ## Storybook
 
 We will not actually add storybook as a dependency, just because it installs so many different things, and creates so many configs and files within the project. We will run it with npx. Make sure to also add the --builder webpack5 because (at least at the time i am writing this) storybook init defaults to webpack 4 instead of 5. After running this command you will see a .storybook folder has been created, along with a `stories` folder in src:
@@ -710,8 +723,48 @@ The next step is to also update the \_app.tsx file, to use the material ui theme
 
 NOTE: The \_app.tsx file will also include the <Head> tag with <meta name="viewport">, which is better kept here and not in the \_document.tsx file, since it can cause some issues: https://stackoverflow.com/questions/65832820/next-js-viewport-meta-tags-should-not-be-used-in-document-jss-head, nextjs: https://nextjs.org/docs/messages/no-document-viewport-meta
 
-### Examples
+### Other Examples
 
 -   https://github.com/mui/material-ui/tree/master/examples/nextjs
 -   https://github.com/leoroese/nextjs-materialui-v5-tutorial/tree/emotion
 -   https://github.com/mayank7924/nextjs-with-mui
+
+## Redux store
+
+The setup for redux with next.js will be a bit different that with react, mainly because server side rendered pages need to have the store in sync with the client side store; what happens for short is that each time a new page is rendered on the server, next.js creates a new store for it, different from the store that exists on the client side; the problem is that the store on the server side page is not aware of the client side store, and the pros created during the server call will be lost. For this reason, we will use next-redux-wrapper, and will go into more details a bit later. For now, just install all needed dependencies:
+
+```
+yarn add redux
+yarn add react-redux
+yarn add redux-thunk
+yarn add next-redux-wrapper
+
+@redux-devtools/extension
+```
+
+Now create the initial folder structure in `src/store` with everything you need. A Basic Example:
+
+```
+redux/
+|
+|– constants/
+|   |– counter.constants.ts         # Initial states, strings for action type values
+|
+|– types/
+|   |– counter.types.ts             # Types for state, actions and union of all actions
+|
+|– actions/
+|   |– counter.actions.ts           # Action creators for app / thunk actions
+|
+|– reducers/
+|   |– counter.reducer.ts           # The reducer for this slice of state
+|
+|– selectors/
+|   |– counter.selectors.ts         # Selector functions
+|
+|– hooks/
+|   |– counter.selectors.ts         # Hooks that return speciffic data / dispatchers
+|
+|- rootReducer.ts                   # Combined slices of state
+|– store.ts                         # Final store with middlewares, dev tools, logger, etc.
+```
