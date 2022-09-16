@@ -8,9 +8,9 @@
     "npm": "please-use-yarn"
   },
   "scripts": {
-    "start": "next dev",
-    "start:debug": "cross-env NODE_OPTIONS='--inspect' next dev",
-    "start:prod": "next start",
+    "dev": "next dev",
+    "dev:debug": "cross-env NODE_OPTIONS='--inspect' next dev",
+    "start": "next start",
     "build": "next build",
     "lint": "next lint",
     "prettier": "prettier --write .",
