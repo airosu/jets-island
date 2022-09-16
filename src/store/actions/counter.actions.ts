@@ -1,5 +1,5 @@
-import { INCREMENT_COUNTER, DECREMENT_COUNTER, RESET_COUNTER } from 'redux/constants/counter.constants'
-import { IncrementCounter, DecrementCounter, ResetCounter } from 'redux/types/counter.types'
+import { INCREMENT_COUNTER, DECREMENT_COUNTER, RESET_COUNTER } from 'store/constants/counter.constants'
+import { IncrementCounter, DecrementCounter, ResetCounter } from 'store/types/counter.types'
 
 export const incrementCounter = (amount: number): IncrementCounter => ({
     type: INCREMENT_COUNTER,

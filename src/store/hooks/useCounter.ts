@@ -1,11 +1,11 @@
 import { useSelector } from 'react-redux'
-import { useAppDispatch } from 'redux/hooks/useAppDispatch'
-import { selectCounterValue } from 'redux/selectors/counter.selectors'
+import { useAppDispatch } from 'store/hooks/useAppDispatch'
+import { selectCounterValue } from 'store/selectors/counter.selectors'
 import {
     incrementCounter as incrementCounterAction,
     decrementCounter as decrementCounterAction,
     resetCounter as resetCounterAction,
-} from 'redux/actions/counter.actions'
+} from 'store/actions/counter.actions'
 
 export const useCounter = () => {
     const dispatch = useAppDispatch()

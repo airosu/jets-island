@@ -10,7 +10,12 @@ Setetup steps for next js application from scratch and online business "Jet's Is
 -   Implement github actions (CI, cypress)
 -   Try / catch / finally fetch setloading in finally block
 -   Linter rule for import ordering
--   Linter rule for import type {} that is only used as type
+-   Linter rule for import type {} that is only used as type, import merging
+-   Customize the material ui theme + investigate if theme was correfctly added to emotion
+-   this: https://so.muouseo.com/qa/r464lrzjo0eg.html
+-   TEST how getStaticProps is triggered when deployed (it should only run once on build time, unlike when running a dev env)
+-   CHECK if this is implemented correctly
+-   Consider changing the commit hook to inclide the build step, currently in push hook?
 
 ## Architecture
 
@@ -731,15 +736,14 @@ NOTE: The \_app.tsx file will also include the <Head> tag with <meta name="viewp
 
 ## Redux store
 
-The setup for redux with next.js will be a bit different that with react, mainly because server side rendered pages need to have the store in sync with the client side store; what happens for short is that each time a new page is rendered on the server, next.js creates a new store for it, different from the store that exists on the client side; the problem is that the store on the server side page is not aware of the client side store, and the pros created during the server call will be lost. For this reason, we will use next-redux-wrapper, and will go into more details a bit later. For now, just install all needed dependencies:
+The setup for redux with next.js will be a bit different that with react, mainly because server side rendered pages need to have the store in sync with the client side store. What happens in short (ins SSR) is that everytime a request for a page is made, next.js creates a new page on the server side and send it back to the client => this means that the server is not aware of the client side store, so each time a new page is rendered on the server, next.js creates a new store for it, different from the store that exists on the client side; the problem is that the store on the server side page is not aware of the client side store, and the props created during the server call will be lost. For this reason, we will create a server side redux store (to be updated with fetched data), and use HYDRATE action from react-redux-wrapper to apply the new store values to the client store. We will go more in depth later, for now just install the dependencies:
 
 ```
 yarn add redux
 yarn add react-redux
 yarn add redux-thunk
 yarn add next-redux-wrapper
-
-@redux-devtools/extension
+yarn add @redux-devtools/extension
 ```
 
 Now create the initial folder structure in `src/store` with everything you need. A Basic Example:
@@ -768,3 +772,57 @@ redux/
 |- rootReducer.ts                   # Combined slices of state
 |– store.ts                         # Final store with middlewares, dev tools, logger, etc.
 ```
+
+Instead of the createStore(...) we used with normal react, we need to create a function that returns this and pass it into createWrapper:
+
+```
+// createWrapper from next-redux-wrapper needs this to be a callback
+export const initStore = () => {
+    return legacy_createStore(
+        rootReducer,
+        composeWithDevTools(applyMiddleware(thunk as ThunkMiddleware<AppState, AppAction>)),
+    )
+}
+
+export const wrapper = createWrapper(initStore)
+```
+
+We will use this wrapper to wrap around all of our app pages and give them all access to the store.
+In the pages/\_app.tsx file, we need to extend the initial app file and instead of exporting default MyApp, we need to export default wrapper.withRedux(MyApp):
+
+```
+interface MyAppProps extends AppProps {
+    emotionCache?: EmotionCache
+}
+
+const MyApp = ({Component, pageProps}: MyAppProps) => <Component {...pageProps} />
+
+export default wrapper.withRedux(MyApp)
+
+```
+
+We will also use this wrapper when exporting getStaticProps / getServerSideProps of a page, instead of how we would normally do it. This will give us access to the store here, and we can use getState(), or dispatch()
+
+```
+export const getStaticProps = wrapper.getStaticProps((store) => (_context) => {
+    const counter = store.getState().counter
+    store.dispatch(incrementCounter(1))
+
+    console.log({ counter })
+
+    return {
+        props: {
+            pageId: 1,
+        },
+    }
+})
+```
+
+Now, we will need to create a master reducer to handle updating the client store with the data fetched on the server. When an action occurs on the server, you will see the action type "\_\_NEXT_REDUX_WRAPPER_HYDRATE\_\_" being dispatched; we will make use of this event to hydrate the client store with any new data that was generated / fetched on the server.
+
+Inside the master reducer we do not need a switch, just two paths, if / else; we will only check if the action.type is === HYDRATE (the action type that is dispatched on the server). If false, it will just return the combinedReducer, so it will act normal on client sidem but if true it will return a state that is a combination of both the client side state AND the newly fetched data; this combined state is what ends up in the client side.
+
+### Other Examples
+
+-   https://github.com/kirill-konshin/next-redux-wrapper#usage
+-   https://github.com/mayank7924/nextjs-with-redux

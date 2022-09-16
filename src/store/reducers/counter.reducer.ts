@@ -1,5 +1,5 @@
-import { INCREMENT_COUNTER, DECREMENT_COUNTER, RESET_COUNTER, initialState } from 'redux/constants/counter.constants'
-import { CounterState, CounterAction } from 'redux/types/counter.types'
+import { INCREMENT_COUNTER, DECREMENT_COUNTER, RESET_COUNTER, initialState } from 'store/constants/counter.constants'
+import { CounterState, CounterAction } from 'store/types/counter.types'
 
 export const counterReducer = (state = initialState, action: CounterAction): CounterState => {
     switch (action.type) {

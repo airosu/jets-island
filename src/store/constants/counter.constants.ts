@@ -1,4 +1,4 @@
-import { CounterState } from 'redux/types/counter.types'
+import { CounterState } from 'store/types/counter.types'
 
 export const INCREMENT_COUNTER = 'INCREMENT_COUNTER'
 export const DECREMENT_COUNTER = 'DECREMENT_COUNTER'
