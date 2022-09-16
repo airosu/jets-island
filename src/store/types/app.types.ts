@@ -1,12 +1,13 @@
 import { Dispatch } from 'redux'
 import { ThunkAction, ThunkDispatch } from 'redux-thunk'
-import { rootReducer } from 'store/rootReducer'
+import { combinedReducer } from 'store/masterReducer'
+import { ClientsAction } from 'store/types/clients.types'
 import { CounterAction } from 'store/types/counter.types'
 
-export type AppState = ReturnType<typeof rootReducer>
+export type AppState = ReturnType<typeof combinedReducer>
 export type GetAppState = () => AppState
 
-export type AppAction = CounterAction
+export type AppAction = CounterAction | ClientsAction
 
 export type AppDispatch = Dispatch<AppAction>
 

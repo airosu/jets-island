@@ -12,6 +12,9 @@ Setetup steps for next js application from scratch and online business "Jet's Is
 -   Linter rule for import ordering
 -   Linter rule for import type {} that is only used as type, import merging
 -   Customize the material ui theme + investigate if theme was correfctly added to emotion
+-   this: https://so.muouseo.com/qa/r464lrzjo0eg.html
+-   TEST how getStaticProps is triggered when deployed (it should only run once on build time, unlike when running a dev env)
+-   CHECK if this is implemented correctly
 
 ## Architecture
 
@@ -769,4 +772,56 @@ redux/
 |– store.ts                         # Final store with middlewares, dev tools, logger, etc.
 ```
 
+Instead of the createStore(...) we used with normal react, we need to create a function that returns this and pass it into createWrapper:
+
+```
+// createWrapper from next-redux-wrapper needs this to be a callback
+export const initStore = () => {
+    return legacy_createStore(
+        rootReducer,
+        composeWithDevTools(applyMiddleware(thunk as ThunkMiddleware<AppState, AppAction>)),
+    )
+}
+
+export const wrapper = createWrapper(initStore)
+```
+
+We will use this wrapper to wrap around all of our app pages and give them all access to the store.
+In the pages/\_app.tsx file, we need to extend the initial app file and instead of exporting default MyApp, we need to export default wrapper.withRedux(MyApp):
+
+```
+interface MyAppProps extends AppProps {
+    emotionCache?: EmotionCache
+}
+
+const MyApp = ({Component, pageProps}: MyAppProps) => <Component {...pageProps} />
+
+export default wrapper.withRedux(MyApp)
+
+```
+
+We will also use this wrapper when exporting getStaticProps / getServerSideProps of a page, instead of how we would normally do it. This will give us access to the store here, and we can use getState(), or dispatch()
+
+```
+export const getStaticProps = wrapper.getStaticProps((store) => (_context) => {
+    const counter = store.getState().counter
+    store.dispatch(incrementCounter(1))
+
+    console.log({ counter })
+
+    return {
+        props: {
+            pageId: 1,
+        },
+    }
+})
+```
+
+Now, we will need to create a master reducer to handle updating the client store with the data fetched on the server. When an action occurs on the server, you will see the action type "\_\_NEXT_REDUX_WRAPPER_HYDRATE\_\_" being dispatched; we will make use of this event to hydrate the client store with any new data that was generated / fetched on the server.
+
+Inside the master reducer we do not need a switch, just two paths, if / else; we will only check if the action.type is === HYDRATE (the action type that is dispatched on the server). If false, it will just return the combinedReducer, so it will act normal on client sidem but if true it will return a state that is a combination of both the client side state AND the newly fetched data; this combined state is what ends up in the client side.
+
 ### Other Examples
+
+-   https://github.com/kirill-konshin/next-redux-wrapper#usage
+-   https://github.com/mayank7924/nextjs-with-redux
