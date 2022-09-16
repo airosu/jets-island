@@ -188,6 +188,12 @@ npx husky install
 
 !IMPORTANT! When creating a hook for the first time, it is highly recommended to use the cli commands (e.g. npx husky add...), as manually creating / copying the files can result in git related errors
 
+DEBUGGING: If the hooks were initially setup on windows and then the project was downloaded on a different os such as mac, it is possible that the hooks will stop working: `hint: The '.husky/pre-push' hook was ignored because it's not set as executable.`. Run the following command in order to make the files as executable (based on https://github.com/typicode/husky/issues/1177 it seems to be mroe of a hack than a proper solution, but it works)
+
+```
+chmod ug+x .husky/*
+```
+
 ##### pre-commit hook
 
 To create a hook that runs each time we commit to the project, we need to add to "pre-commit"; here, we can add the "yarn lint" script to make sure that there are no linter errors before commiting
