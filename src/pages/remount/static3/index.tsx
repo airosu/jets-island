@@ -28,7 +28,7 @@ export const Static3: NextPage<InferGetStaticPropsType<typeof getStaticProps>> =
     const effectRan = useRef(false)
 
     useEffect(() => {
-        console.log({ msg: 'mount' })
+        console.log({ msg: 'mount', fetchedComments, isLoading })
 
         if (effectRan.current === false) {
             // semicolon linter rule conflict with prettier

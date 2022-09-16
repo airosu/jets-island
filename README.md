@@ -15,6 +15,7 @@ Setetup steps for next js application from scratch and online business "Jet's Is
 -   this: https://so.muouseo.com/qa/r464lrzjo0eg.html
 -   TEST how getStaticProps is triggered when deployed (it should only run once on build time, unlike when running a dev env)
 -   CHECK if this is implemented correctly
+-   Consider changing the commit hook to inclide the build step, currently in push hook?
 
 ## Architecture
 
