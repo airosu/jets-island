@@ -9,7 +9,7 @@ import { selectClientNames } from 'store/selectors/clients.selectors'
 import { selectCounterValue } from 'store/selectors/counter.selectors'
 import { wrapper } from 'store/store'
 
-export const Static1: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({ pageId }) => {
+export const Static1: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({ pageId, clientData }) => {
     const [hydrated, setHydrated] = useState(false)
     const [name, setName] = useState('')
 
@@ -26,6 +26,8 @@ export const Static1: NextPage<InferGetStaticPropsType<typeof getStaticProps>> =
         // Returns null on first render, so the client and server match
         return null
     }
+
+    console.log({ msg: 'Test >>>', clientData })
 
     return (
         <div>
@@ -70,9 +72,15 @@ export const getStaticProps = wrapper.getStaticProps((store) => async (_context)
     // This dispatch will run twice because of "reactStrictMode: true" in next.config.js
     store.dispatch(incrementCounter(1))
 
+    // Fetch client
+    const response = await fetch(`https://reqres.in/api/users/${Math.floor(Math.random() * 10 + 1)}`)
+    const { data } = await response.json()
+    // store.dispatch(addClient(`${data.first_name} ${data.last_name}`))
+
     return {
         props: {
             pageId: 1,
+            clientData: data,
         },
     }
 })

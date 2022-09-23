@@ -16,6 +16,7 @@ Setetup steps for next js application from scratch and online business "Jet's Is
 -   TEST how getStaticProps is triggered when deployed (it should only run once on build time, unlike when running a dev env)
 -   CHECK if this is implemented correctly
 -   Consider changing the commit hook to inclide the build step, currently in push hook?
+-   When using a single page, a store is actually not really needed, since the data is fetched and passed as props to the page at build time (meaning that the data will always be there from the start). When you want to use the data in multiple places / pages of the app, you can use a store; when a store is created (a provider around the app), the fetched data will end up in two places: 1. the page, as props and 2. the actual store (at least I think this is how it works, needs testing): https://www.youtube.com/watch?v=_gRxCvDjWjs
 
 ## Architecture
 

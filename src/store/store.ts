@@ -21,4 +21,4 @@ export const initStore = () => {
     )
 }
 
-export const wrapper = createWrapper(initStore)
+export const wrapper = createWrapper(initStore, { debug: true })
