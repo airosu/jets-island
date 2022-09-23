@@ -17,7 +17,15 @@ export const masterReducer = (state: AppState, action: AnyAction): ReturnType<ty
             counter: {
                 value: state.counter.value + action.payload.counter.value,
             },
+            clients: {
+                names: [...state.clients.names, ...action.payload.clients.names],
+            },
         }
+        // const nextState = {
+        //     ...state, // use previous state
+        //     ...action.payload, // apply delta from hydration
+        // }
+        // return nextState
     } else {
         return combinedReducer(state, action)
     }
