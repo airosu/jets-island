@@ -27,6 +27,8 @@ export const Static1: NextPage<InferGetStaticPropsType<typeof getStaticProps>> =
         return null
     }
 
+    console.log({ msg: 'Test >>>', clientData })
+
     return (
         <div>
             <h1>Static - {pageId}</h1>
