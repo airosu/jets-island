@@ -17,6 +17,7 @@ Setetup steps for next js application from scratch and online business "Jet's Is
 -   CHECK if this is implemented correctly
 -   Consider changing the commit hook to inclide the build step, currently in push hook?
 -   When using a single page, a store is actually not really needed, since the data is fetched and passed as props to the page at build time (meaning that the data will always be there from the start). When you want to use the data in multiple places / pages of the app, you can use a store; when a store is created (a provider around the app), the fetched data will end up in two places: 1. the page, as props and 2. the actual store (at least I think this is how it works, needs testing): https://www.youtube.com/watch?v=_gRxCvDjWjs
+-   Inside the admin panel, crete a "proof of concept tab"; here, create an accessories / tools drag and drop minigame, possibly a "click on the accessory" to add / remove, as an alternative concept for the configurator
 
 ## Architecture
 
@@ -743,7 +744,7 @@ NOTE: The \_app.tsx file will also include the <Head> tag with <meta name="viewp
 
 ## Redux store
 
-The setup for redux with next.js will be a bit different that with react, mainly because server side rendered pages need to have the store in sync with the client side store. What happens in short (ins SSR) is that everytime a request for a page is made, next.js creates a new page on the server side and send it back to the client => this means that the server is not aware of the client side store, so each time a new page is rendered on the server, next.js creates a new store for it, different from the store that exists on the client side; the problem is that the store on the server side page is not aware of the client side store, and the props created during the server call will be lost. For this reason, we will create a server side redux store (to be updated with fetched data), and use HYDRATE action from react-redux-wrapper to apply the new store values to the client store. We will go more in depth later, for now just install the dependencies:
+The setup for redux with next.js will be a bit different that with react, mainly because server side rendered pages need to have the store in sync with the client side store. What happens in short (in SSR) is that everytime a request for a page is made, next.js creates a new page on the server side and sends it back to the client => this means that the server is not aware of the client side store, so each time a new page is rendered on the server, next.js creates a new store for it, different from the store that exists on the client side; the problem is that the store on the server side page is not aware of the client side store, and the props created during the server call will be lost. For this reason, we will create a server side redux store (to be updated with fetched data), and use HYDRATE action from react-redux-wrapper to apply the new store values to the client store. We will go more in depth later, for now just install the dependencies:
 
 ```
 yarn add redux
@@ -751,6 +752,8 @@ yarn add react-redux
 yarn add redux-thunk
 yarn add next-redux-wrapper
 yarn add @redux-devtools/extension
+
+yarn add redux react-redux redux-thunk next-redux-wrapper @redux-devtools/extension
 ```
 
 Now create the initial folder structure in `src/store` with everything you need. A Basic Example:
