@@ -832,6 +832,149 @@ Now, we will need to create a master reducer to handle updating the client store
 
 Inside the master reducer we do not need a switch, just two paths, if / else; we will only check if the action.type is === HYDRATE (the action type that is dispatched on the server). If false, it will just return the combinedReducer, so it will act normal on client sidem but if true it will return a state that is a combination of both the client side state AND the newly fetched data; this combined state is what ends up in the client side.
 
+## Testing
+
+There are multiple types of testing that can be performed, we will be focusing on only 3 of them:
+
+-   Unit testing: check the smallest parts possible, individual functions and components
+-   Integration testing: check that multiple modules work well together
+-   End-to-end testing: replicate a user behavior with the software in a complete application environment
+
+The first two types are similar in implementation, and the only real differences will be in scope and where the .test files are placed. For unit tests, the files will be placed inside the module / same folder as the function we are testing. The integration tests will mainly be testing individual pages, and for this we are creating a separate folder unde src/test/spec/integration/pages, where we will mimic the src/pages folder, creating one test file for each page.
+
+### Unit / Integration testing
+
+First, install the dependencies.
+
+-   jest = the testing framework we are using
+-   @types/jest = the type definitions for jest
+-   ts-jest = compile .ts and .tsx files and pass them to jest to run
+-   @testing-library/react = library for jest with commands that help with tesitng react components
+-   @testing-library/jest-dom = companion library for Testing Library that provides custom DOM element matchers for Jest
+-   @testing-library/user-event = companion library for Testing Library that simulates user interactions
+
+```
+yarn add --dev jest
+yarn add --dev @types/jest
+yarn add --dev ts-jest
+yarn add --dev @testing-library/react
+yarn add --dev @testing-library/jest-dom
+yarn add --dev @testing-library/user-event
+
+# One liner
+yarn add --dev jest @types/jest ts-jest @testing-library/react @testing-library/jest-dom @testing-library/user-event
+```
+
+Apart from these, other dependencies will also be needed in order to configure jest:
+
+-   node-ts = will be needed to read the .ts file type of jest.config
+-   jest-environment-jsdom = As of Jest 28 "jest-environment-jsdom" is no longer shipped by default
+-   eslint-plugin-jest
+
+```
+yarn add --dev ts-node
+yarn add --dev jest-environment-jsdom
+```
+
+The next step would be to add jest to the .eslintrc.json file, under plugins.
+
+```
+{
+    "plugins": ["jest"],
+}
+```
+
+Also add "plugin:jest/recommended" to the "extends" array:
+
+```
+{
+  "extends": [
+    "plugin:jest/recommended"
+  ],
+}
+```
+
+You can modify the recommended rules by updating them in the rules section (https://github.com/jest-community/eslint-plugin-jest/tree/main/docs/rules):
+
+```
+{
+  "rules": {
+    "jest/no-disabled-tests": "warn",
+    "jest/no-focused-tests": "error",
+    "jest/no-identical-title": "error",
+    "jest/prefer-to-have-length": "warn",
+    "jest/valid-expect": "error"
+  }
+}
+```
+
+You can also tell ESLint about the environment variables provided by Jest by doing adding this (it lets eslint know that "describe", "it", etc are global and do not need to be imported, similar to React)
+
+```
+{
+  "env": {
+    "jest/globals": true
+  }
+}
+```
+
+A jest.config.ts file will also need to be created (remember that ts-node needs to be installed in order to use the .ts extension). The most notable configurations are:
+
+-   testEnvironment (default 'node'): The test environment that will be used for testing. The default environment in Jest is a Node.js environment, but for us to test react components in a browser like environment we will need to add jsdom instead. The @jest-environment docblock can also be added at the top of the file to change the test env for the tests in that file only
+-   preset: A preset that is used as a base for Jest's configuration. We will be using ts-jest. IMPORTANT: also make sure that in tsconfig you set "jsx": "react-jsx", not "preserve"
+-   collectCoverage: can be flagged as true, if you want to always collect coverage (an alternative is to pass in the --coverage flag on the npm script)
+-   coverageProvider: not adding this may result in errors when trying to gather coverage
+-   collectCoverageFrom: this array can be used to specify what type of files to collect coverage from, and what types of files should be excluded, e.g. styles, type defition files, configs files, etc.
+
+```
+import type { Config } from 'jest'
+
+const config: Config = {
+    preset: 'ts-jest',
+    testEnvironment: 'jsdom',
+    coverageProvider: 'v8',
+    collectCoverageFrom: [
+        '**/*.{ts,tsx}',
+        '!**/*.d.ts',
+        '!**/node_modules/**',
+        '!<rootDir>/out/**',
+        '!<rootDir>/.next/**',
+        '!<rootDir>/*.config.{ts,js}',
+        '!<rootDir>/coverage/**',
+    ],
+}
+
+export default config
+```
+
+In order to be able to use the jest-dom custom matchers, we can import them for every test by adding the following option to the Jest configuration file:
+
+```
+setupFilesAfterEnv: ['<rootDir>/jest.setup.ts']
+```
+
+Then, inside jest.setup.jt, add the following import:
+
+```
+import '@testing-library/jest-dom/extend-expect'
+```
+
+In order to run the tests, add the following scripts to package.json (the vscode plugin jest-runner can also be installed, to run the tests directly from the .tedt file individually, or vscode-jest to run the tests on each change)
+
+```
+  "scripts": {
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:cov": "jest --coverage",
+  },
+```
+
+TODO: add test threshold
+
+### !!DEBUGGING!!!
+
+-   SyntaxError: Unexpected token '<': if you get this error when running the tests, make sure ts-jest is configured correctly. Also, make sure that in .tsconfig the "jsx" is set to "react-jsx", not "preserve".
+
 ### Other Examples
 
 -   https://github.com/kirill-konshin/next-redux-wrapper#usage
