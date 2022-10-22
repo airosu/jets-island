@@ -1,8 +1,9 @@
 /**
- * Remove duplicate values from an array
+ * Removes duplicate values from an array of primitives.
  *
  * @example
- * removeDuplicates([1, 'apple', 1, 2, 'apple', 1]) // => [1, 'apple', 2]
+ * removeDuplicates(['A', 'A', 'B', 'B', 'A', 'C', 'B']) // => ['A', 'B', 'C']
+ * removeDuplicates([1, 1, 2, 1, 2, 3, 1]) // => [1, 2, 3]
  */
 
 export const removeDuplicates = <T>(arr: T[]) => [...Array.from(new Set(arr))]

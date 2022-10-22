@@ -1,4 +1,4 @@
-import type { FC } from 'react'
+import { FC } from 'react'
 import type { BaseTemplateProps } from './BaseTemplate.types'
 
 export const BaseTemplate: FC<BaseTemplateProps> = ({ isOk, onClick }) => {
