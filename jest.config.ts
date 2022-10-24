@@ -14,6 +14,9 @@ const config: Config = {
         '!<rootDir>/coverage/**',
     ],
     setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
+    transform: {
+        '^.+\\.tsx?$': ['ts-jest', { tsconfig: 'tsconfig.test.json' }],
+    },
 }
 
 export default config
