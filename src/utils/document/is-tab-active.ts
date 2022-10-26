@@ -1,5 +1,5 @@
 /**
- * Checks if the current tab is active, at the moment of execution
+ * Returns true if the tab is active at the moment of execution.
  *
  * @example
  *  setTimeout(() => {

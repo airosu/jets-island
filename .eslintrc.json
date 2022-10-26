@@ -12,7 +12,7 @@
     "VoidFunction": "readonly"
   },
   "rules": {
-    "no-unused-vars": [1, { "args": "after-used", "argsIgnorePattern": "^_" }],
+    "no-unused-vars": "off",
     "@emotion/jsx-import": "error",
     "@emotion/no-vanilla": "error",
     "@emotion/import-from-emotion": "error",

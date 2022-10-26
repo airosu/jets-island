@@ -11,8 +11,8 @@ describe('isTabActive()', () => {
 
     it('should return "true" current tab is in focus', () => {
         Object.defineProperty(global.document, 'hidden', {
-            value: false,
-            writable: false,
+            value: false, // default
+            writable: false, // default
         })
         expect(isTabActive()).toBe(true)
     })

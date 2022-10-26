@@ -18,6 +18,7 @@ Setetup steps for next js application from scratch and online business "Jet's Is
 -   Consider changing the commit hook to inclide the build step, currently in push hook?
 -   When using a single page, a store is actually not really needed, since the data is fetched and passed as props to the page at build time (meaning that the data will always be there from the start). When you want to use the data in multiple places / pages of the app, you can use a store; when a store is created (a provider around the app), the fetched data will end up in two places: 1. the page, as props and 2. the actual store (at least I think this is how it works, needs testing): https://www.youtube.com/watch?v=_gRxCvDjWjs
 -   Inside the admin panel, crete a "proof of concept tab"; here, create an accessories / tools drag and drop minigame, possibly a "click on the accessory" to add / remove, as an alternative concept for the configurator
+-   Once the project is large enough, see if removing barrel files fixes.... something
 
 ## Architecture
 
@@ -85,12 +86,12 @@ When using react version 17 or newer, the React object is global, so you no long
 }
 ```
 
-Lastly, we will add an entry for rules, where we can manually turn on/off different rules we like / don't like. For example, we can set the no-unused-vars to X (0 = ok, 1 = warning, 2 = error) and make it ignore variables prefixed with "\_". All possible rules are documented here: https://nextjs.org/docs/basic-features/eslint
+Lastly, we will add an entry for rules, where we can manually turn on/off different rules we like / don't like. For example, we can set the lorem-ipsum to X (0 = ok, 1 = warning, 2 = error) and make it ignore variables prefixed with "\_". All possible rules are documented here: https://nextjs.org/docs/basic-features/eslint
 
 ```
 {
   "rules": {
-    "no-unused-vars": [1, { "args": "after-used", "argsIgnorePattern": "^_" }]
+    "lorem-ipsum": [1, { "args": "after-used", "argsIgnorePattern": "^_" }]
   }
 }
 ```
@@ -925,6 +926,7 @@ A jest.config.ts file will also need to be created (remember that ts-node needs 
 -   collectCoverage: can be flagged as true, if you want to always collect coverage (an alternative is to pass in the --coverage flag on the npm script)
 -   coverageProvider: not adding this may result in errors when trying to gather coverage
 -   collectCoverageFrom: this array can be used to specify what type of files to collect coverage from, and what types of files should be excluded, e.g. styles, type defition files, configs files, etc.
+-   moduleDirectories: appart from the default node_modules, other module locations can also be specified here, such as "src" when using "baseUrl": "src" in ts-config
 
 ```
 import type { Config } from 'jest'
@@ -942,6 +944,7 @@ const config: Config = {
         '!<rootDir>/*.config.{ts,js}',
         '!<rootDir>/coverage/**',
     ],
+    moduleDirectories: ['node_modules', 'src'],
 }
 
 export default config
