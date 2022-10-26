@@ -88,10 +88,14 @@ When using react version 17 or newer, the React object is global, so you no long
 
 Lastly, we will add an entry for rules, where we can manually turn on/off different rules we like / don't like. For example, we can set the lorem-ipsum to X (0 = ok, 1 = warning, 2 = error) and make it ignore variables prefixed with "\_". All possible rules are documented here: https://nextjs.org/docs/basic-features/eslint
 
+TODO: Properly update readme with these steps
+UPDATE: using no-unused-vars is not ideal with typescript (as it does not cover TS speciffic features and for example returns fals positives when using enum). The no-unused-vars should be set to false, @typescript-eslint/no-unused-vars must be used in it's place (requires two dev dependencies: @typescript-eslint/eslint-plugin and @typescript-eslint/parser). Then .eslintrc.json must be updated with these: "parser": "@typescript-eslint/parser", "extends": ["plugin:@typescript-eslint/recommended"], "plugins": ["@typescript-eslint"],
+
 ```
 {
   "rules": {
-    "lorem-ipsum": [1, { "args": "after-used", "argsIgnorePattern": "^_" }]
+    "no-unused-vars": "off",
+    "@typescript-eslint/no-unused-vars": [1, { "args": "after-used", "argsIgnorePattern": "^_" }],
   }
 }
 ```

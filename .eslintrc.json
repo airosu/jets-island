@@ -4,15 +4,18 @@
     "next",
     "next/core-web-vitals",
     "eslint:recommended",
-    "plugin:jest/recommended"
+    "plugin:jest/recommended",
+    "plugin:@typescript-eslint/recommended"
   ],
-  "plugins": ["@emotion", "jest"],
+  "parser": "@typescript-eslint/parser",
+  "plugins": ["@emotion", "jest", "@typescript-eslint"],
   "globals": {
     "React": "readonly",
     "VoidFunction": "readonly"
   },
   "rules": {
     "no-unused-vars": "off",
+    "@typescript-eslint/no-unused-vars": [1, { "args": "after-used", "argsIgnorePattern": "^_" }],
     "@emotion/jsx-import": "error",
     "@emotion/no-vanilla": "error",
     "@emotion/import-from-emotion": "error",
