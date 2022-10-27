@@ -982,6 +982,13 @@ TODO: add test threshold
 
 -   SyntaxError: Unexpected token '<': if you get this error when running the tests, make sure ts-jest is configured correctly. Also, make sure that in .tsconfig the "jsx" is set to "react-jsx", not "preserve".
 
+-   (This is a weird one) functions working in the browser but behaving weird / failing in jsdom tests when accessing things like document, window, navigator, etc. Below is a list of js commands that if are present multiple times in a single function, can cause the tests to run with the first input provided and mocked, instead of each test running on it's own input. As a workaround to this is to add them in a constant and return that, instead of copying the same line of code multiple times, even if used simply in a console.log
+
+```
+window.getSelection()?.toString()
+mobileDeviceRegex.test(navigator.userAgent)
+```
+
 ### Other Examples
 
 -   https://github.com/kirill-konshin/next-redux-wrapper#usage
