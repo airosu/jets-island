@@ -2,7 +2,7 @@
  * @jest-environment node
  */
 
-import { removeDuplicates } from './remove-duplicates'
+import { removeDuplicates } from './removeDuplicates'
 
 const mockArray1 = ['A', 'A', 'B', 'B', 'A', 'C', 'B']
 const mockArray2 = [1, 1, 2, 1, 2, 3, 1]

@@ -1,6 +1,6 @@
 import { MOCK_USER_AGENT_MOBILE, MOCK_USER_AGENT_PC } from 'test/mocks/device.mocks'
 import { DeviceType } from 'constants/device'
-import { checkDeviceType } from './check-device-type'
+import { checkDeviceType } from './checkDeviceType'
 
 describe('checkDeviceType()', () => {
     it('should return "pc" if user agent is a desktop machine', () => {

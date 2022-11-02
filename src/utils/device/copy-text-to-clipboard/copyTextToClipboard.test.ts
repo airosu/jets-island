@@ -1,4 +1,4 @@
-import { copyTextToClipboard } from './copy-text-to-clipboard'
+import { copyTextToClipboard } from './copyTextToClipboard'
 
 const MOCK_TEXT = 'Hello world!'
 const mockNavigatorWriteText = jest.fn()

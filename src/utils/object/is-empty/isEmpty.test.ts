@@ -2,7 +2,7 @@
  * @jest-environment node
  */
 
-import { isEmpty } from './is-empty'
+import { isEmpty } from './isEmpty'
 
 describe('isEmpty()', () => {
     it('should return "true" if input object has no keys', () => {

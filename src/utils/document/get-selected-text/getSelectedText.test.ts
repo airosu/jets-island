@@ -1,4 +1,4 @@
-import { getSelectedText } from './get-selected-text'
+import { getSelectedText } from './getSelectedText'
 
 const MOCK_STRING = 'lorem ipsum 123'
 

@@ -1,5 +1,5 @@
 import { render } from '@testing-library/react'
-import { isElementInFocus } from './is-element-in-focus'
+import { isElementInFocus } from './isElementInFocus'
 import userEvent from '@testing-library/user-event'
 
 const BUTTON_LABEL = 'Click me!'

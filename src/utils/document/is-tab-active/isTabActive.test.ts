@@ -1,4 +1,4 @@
-import { isTabActive } from './is-tab-active'
+import { isTabActive } from './isTabActive'
 
 describe('isTabActive()', () => {
     it('also should return "false" if current tab is out of focus', () => {
