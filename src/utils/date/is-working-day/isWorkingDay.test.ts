@@ -3,6 +3,7 @@
  */
 
 import { isWorkingDay } from './isWorkingDay'
+import { startOfDay } from 'date-fns'
 
 describe('isWorkingDay()', () => {
     it.each([
@@ -12,13 +13,13 @@ describe('isWorkingDay()', () => {
         { name: 'thursday', date: '2022-10-27' },
         { name: 'friday', date: '2022-10-28' },
     ])('should return "true" if provided date is a working day: $name', ({ date }) => {
-        expect(isWorkingDay(new Date(date))).toBe(true)
+        expect(isWorkingDay(startOfDay(new Date(date)))).toBe(true)
     })
 
     it.each([
         { name: 'saturday', date: '2022-10-29' },
         { name: 'sunday', date: '2022-10-30' },
     ])('should return "false" if provided date is a weekend day: $name', ({ date }) => {
-        expect(isWorkingDay(new Date(date))).toBe(false)
+        expect(isWorkingDay(startOfDay(new Date(date)))).toBe(false)
     })
 })
