@@ -12,3 +12,4 @@ export const generateRandomHexColor = () =>
 
 // TODO: add # to character "hash" locales
 // TODO: rename this to "get" instead of "generate"? to be consistent with random utils
+// TODO: remove this comment

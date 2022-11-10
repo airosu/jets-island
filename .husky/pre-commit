@@ -11,3 +11,4 @@ fi
 
 yarn lint
 yarn prettier
+yarn test:affected
