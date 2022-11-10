@@ -973,6 +973,7 @@ In order to run the tests, add the following scripts to package.json (the vscode
     "test": "jest",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
+    "test:affected": "jest --onlyChanged",
   },
 ```
 
