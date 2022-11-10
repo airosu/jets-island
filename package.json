@@ -16,7 +16,6 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:affected": "jest --onlyChanged",
-    "test:changed": "jest --changedSince",
     "lint": "next lint",
     "prettier": "prettier --write .",
     "prepare": "husky install",

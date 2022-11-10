@@ -3,4 +3,3 @@
 . "$(dirname -- "$0")/common.sh"
 
 yarn build
-yarn test:changed
