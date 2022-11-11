@@ -8,17 +8,14 @@
     "noEmit": true,
     "jsx": "preserve",
     "incremental": true,
-
     /* Strict Type-Checking Options */
     "strict": true,
-
     /* Additional Checks */
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
     "forceConsistentCasingInFileNames": true,
-
     /* Module Resolution Options */
     "moduleResolution": "node",
     "isolatedModules": true,

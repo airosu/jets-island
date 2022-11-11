@@ -1,17 +1,30 @@
 {
-  "extends": ["plugin:storybook/recommended", "next", "next/core-web-vitals", "eslint:recommended"],
-  "plugins": ["@emotion"],
+  "extends": [
+    "plugin:storybook/recommended",
+    "next",
+    "next/core-web-vitals",
+    "eslint:recommended",
+    "plugin:jest/recommended",
+    "plugin:@typescript-eslint/recommended"
+  ],
+  "parser": "@typescript-eslint/parser",
+  "plugins": ["@emotion", "jest", "@typescript-eslint"],
   "globals": {
     "React": "readonly",
     "VoidFunction": "readonly"
   },
   "rules": {
-    "no-unused-vars": [1, { "args": "after-used", "argsIgnorePattern": "^_" }],
+    "no-unused-vars": "off",
+    "@typescript-eslint/no-unused-vars": [1, { "args": "after-used", "argsIgnorePattern": "^_" }],
     "@emotion/jsx-import": "error",
     "@emotion/no-vanilla": "error",
     "@emotion/import-from-emotion": "error",
     "@emotion/styled-import": "error",
-    "@emotion/syntax-preference": [2, "string"]
+    "@emotion/syntax-preference": [2, "string"],
+    "jest/no-focused-tests": "error"
+  },
+  "env": {
+    "jest/globals": true
   },
   "overrides": [
     {

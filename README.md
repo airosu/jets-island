@@ -17,6 +17,8 @@ Setetup steps for next js application from scratch and online business "Jet's Is
 -   CHECK if this is implemented correctly
 -   Consider changing the commit hook to inclide the build step, currently in push hook?
 -   When using a single page, a store is actually not really needed, since the data is fetched and passed as props to the page at build time (meaning that the data will always be there from the start). When you want to use the data in multiple places / pages of the app, you can use a store; when a store is created (a provider around the app), the fetched data will end up in two places: 1. the page, as props and 2. the actual store (at least I think this is how it works, needs testing): https://www.youtube.com/watch?v=_gRxCvDjWjs
+-   Inside the admin panel, crete a "proof of concept tab"; here, create an accessories / tools drag and drop minigame, possibly a "click on the accessory" to add / remove, as an alternative concept for the configurator
+-   Once the project is large enough, see if removing barrel files fixes.... something
 
 ## Architecture
 
@@ -84,12 +86,16 @@ When using react version 17 or newer, the React object is global, so you no long
 }
 ```
 
-Lastly, we will add an entry for rules, where we can manually turn on/off different rules we like / don't like. For example, we can set the no-unused-vars to X (0 = ok, 1 = warning, 2 = error) and make it ignore variables prefixed with "\_". All possible rules are documented here: https://nextjs.org/docs/basic-features/eslint
+Lastly, we will add an entry for rules, where we can manually turn on/off different rules we like / don't like. For example, we can set the lorem-ipsum to X (0 = ok, 1 = warning, 2 = error) and make it ignore variables prefixed with "\_". All possible rules are documented here: https://nextjs.org/docs/basic-features/eslint
+
+TODO: Properly update readme with these steps
+UPDATE: using no-unused-vars is not ideal with typescript (as it does not cover TS speciffic features and for example returns fals positives when using enum). The no-unused-vars should be set to false, @typescript-eslint/no-unused-vars must be used in it's place (requires two dev dependencies: @typescript-eslint/eslint-plugin and @typescript-eslint/parser). Then .eslintrc.json must be updated with these: "parser": "@typescript-eslint/parser", "extends": ["plugin:@typescript-eslint/recommended"], "plugins": ["@typescript-eslint"],
 
 ```
 {
   "rules": {
-    "no-unused-vars": [1, { "args": "after-used", "argsIgnorePattern": "^_" }]
+    "no-unused-vars": "off",
+    "@typescript-eslint/no-unused-vars": [1, { "args": "after-used", "argsIgnorePattern": "^_" }],
   }
 }
 ```
@@ -743,7 +749,7 @@ NOTE: The \_app.tsx file will also include the <Head> tag with <meta name="viewp
 
 ## Redux store
 
-The setup for redux with next.js will be a bit different that with react, mainly because server side rendered pages need to have the store in sync with the client side store. What happens in short (ins SSR) is that everytime a request for a page is made, next.js creates a new page on the server side and send it back to the client => this means that the server is not aware of the client side store, so each time a new page is rendered on the server, next.js creates a new store for it, different from the store that exists on the client side; the problem is that the store on the server side page is not aware of the client side store, and the props created during the server call will be lost. For this reason, we will create a server side redux store (to be updated with fetched data), and use HYDRATE action from react-redux-wrapper to apply the new store values to the client store. We will go more in depth later, for now just install the dependencies:
+The setup for redux with next.js will be a bit different that with react, mainly because server side rendered pages need to have the store in sync with the client side store. What happens in short (in SSR) is that everytime a request for a page is made, next.js creates a new page on the server side and sends it back to the client => this means that the server is not aware of the client side store, so each time a new page is rendered on the server, next.js creates a new store for it, different from the store that exists on the client side; the problem is that the store on the server side page is not aware of the client side store, and the props created during the server call will be lost. For this reason, we will create a server side redux store (to be updated with fetched data), and use HYDRATE action from react-redux-wrapper to apply the new store values to the client store. We will go more in depth later, for now just install the dependencies:
 
 ```
 yarn add redux
@@ -751,6 +757,8 @@ yarn add react-redux
 yarn add redux-thunk
 yarn add next-redux-wrapper
 yarn add @redux-devtools/extension
+
+yarn add redux react-redux redux-thunk next-redux-wrapper @redux-devtools/extension
 ```
 
 Now create the initial folder structure in `src/store` with everything you need. A Basic Example:
@@ -828,6 +836,159 @@ export const getStaticProps = wrapper.getStaticProps((store) => (_context) => {
 Now, we will need to create a master reducer to handle updating the client store with the data fetched on the server. When an action occurs on the server, you will see the action type "\_\_NEXT_REDUX_WRAPPER_HYDRATE\_\_" being dispatched; we will make use of this event to hydrate the client store with any new data that was generated / fetched on the server.
 
 Inside the master reducer we do not need a switch, just two paths, if / else; we will only check if the action.type is === HYDRATE (the action type that is dispatched on the server). If false, it will just return the combinedReducer, so it will act normal on client sidem but if true it will return a state that is a combination of both the client side state AND the newly fetched data; this combined state is what ends up in the client side.
+
+## Testing
+
+There are multiple types of testing that can be performed, we will be focusing on only 3 of them:
+
+-   Unit testing: check the smallest parts possible, individual functions and components
+-   Integration testing: check that multiple modules work well together
+-   End-to-end testing: replicate a user behavior with the software in a complete application environment
+
+The first two types are similar in implementation, and the only real differences will be in scope and where the .test files are placed. For unit tests, the files will be placed inside the module / same folder as the function we are testing. The integration tests will mainly be testing individual pages, and for this we are creating a separate folder unde src/test/spec/integration/pages, where we will mimic the src/pages folder, creating one test file for each page.
+
+### Unit / Integration testing
+
+First, install the dependencies.
+
+-   jest = the testing framework we are using
+-   @types/jest = the type definitions for jest
+-   ts-jest = compile .ts and .tsx files and pass them to jest to run
+-   @testing-library/react = library for jest with commands that help with tesitng react components
+-   @testing-library/jest-dom = companion library for Testing Library that provides custom DOM element matchers for Jest
+-   @testing-library/user-event = companion library for Testing Library that simulates user interactions
+
+```
+yarn add --dev jest
+yarn add --dev @types/jest
+yarn add --dev ts-jest
+yarn add --dev @testing-library/react
+yarn add --dev @testing-library/jest-dom
+yarn add --dev @testing-library/user-event
+
+# One liner
+yarn add --dev jest @types/jest ts-jest @testing-library/react @testing-library/jest-dom @testing-library/user-event
+```
+
+Apart from these, other dependencies will also be needed in order to configure jest:
+
+-   node-ts = will be needed to read the .ts file type of jest.config
+-   jest-environment-jsdom = As of Jest 28 "jest-environment-jsdom" is no longer shipped by default
+-   eslint-plugin-jest
+
+```
+yarn add --dev ts-node
+yarn add --dev jest-environment-jsdom
+```
+
+The next step would be to add jest to the .eslintrc.json file, under plugins.
+
+```
+{
+    "plugins": ["jest"],
+}
+```
+
+Also add "plugin:jest/recommended" to the "extends" array:
+
+```
+{
+  "extends": [
+    "plugin:jest/recommended"
+  ],
+}
+```
+
+You can modify the recommended rules by updating them in the rules section (https://github.com/jest-community/eslint-plugin-jest/tree/main/docs/rules):
+
+```
+{
+  "rules": {
+    "jest/no-disabled-tests": "warn",
+    "jest/no-focused-tests": "error",
+    "jest/no-identical-title": "error",
+    "jest/prefer-to-have-length": "warn",
+    "jest/valid-expect": "error"
+  }
+}
+```
+
+You can also tell ESLint about the environment variables provided by Jest by doing adding this (it lets eslint know that "describe", "it", etc are global and do not need to be imported, similar to React)
+
+```
+{
+  "env": {
+    "jest/globals": true
+  }
+}
+```
+
+A jest.config.ts file will also need to be created (remember that ts-node needs to be installed in order to use the .ts extension). The most notable configurations are:
+
+-   testEnvironment (default 'node'): The test environment that will be used for testing. The default environment in Jest is a Node.js environment, but for us to test react components in a browser like environment we will need to add jsdom instead. The @jest-environment docblock can also be added at the top of the file to change the test env for the tests in that file only
+-   preset: A preset that is used as a base for Jest's configuration. We will be using ts-jest. IMPORTANT: also make sure that in tsconfig you set "jsx": "react-jsx", not "preserve"
+-   collectCoverage: can be flagged as true, if you want to always collect coverage (an alternative is to pass in the --coverage flag on the npm script)
+-   coverageProvider: not adding this may result in errors when trying to gather coverage
+-   collectCoverageFrom: this array can be used to specify what type of files to collect coverage from, and what types of files should be excluded, e.g. styles, type defition files, configs files, etc.
+-   moduleDirectories: appart from the default node_modules, other module locations can also be specified here, such as "src" when using "baseUrl": "src" in ts-config
+
+```
+import type { Config } from 'jest'
+
+const config: Config = {
+    preset: 'ts-jest',
+    testEnvironment: 'jsdom',
+    coverageProvider: 'v8',
+    collectCoverageFrom: [
+        '**/*.{ts,tsx}',
+        '!**/*.d.ts',
+        '!**/node_modules/**',
+        '!<rootDir>/out/**',
+        '!<rootDir>/.next/**',
+        '!<rootDir>/*.config.{ts,js}',
+        '!<rootDir>/coverage/**',
+    ],
+    moduleDirectories: ['node_modules', 'src'],
+}
+
+export default config
+```
+
+In order to be able to use the jest-dom custom matchers, we can import them for every test by adding the following option to the Jest configuration file:
+
+```
+setupFilesAfterEnv: ['<rootDir>/jest.setup.ts']
+```
+
+Then, inside jest.setup.jt, add the following import:
+
+```
+import '@testing-library/jest-dom/extend-expect'
+```
+
+In order to run the tests, add the following scripts to package.json (the vscode plugin jest-runner can also be installed, to run the tests directly from the .tedt file individually, or vscode-jest to run the tests on each change)
+
+```
+  "scripts": {
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:cov": "jest --coverage",
+    "test:affected": "jest --onlyChanged",
+  },
+```
+
+TODO: add test threshold
+
+### !!DEBUGGING!!!
+
+-   SyntaxError: Unexpected token '<': if you get this error when running the tests, make sure ts-jest is configured correctly. Also, make sure that in .tsconfig the "jsx" is set to "react-jsx", not "preserve".
+
+-   (This is a weird one) functions working in the browser but behaving weird / failing in jsdom tests when accessing things like document, window, navigator, etc. Below is a list of js commands that if are present multiple times in a single function, can cause the tests to run with the first input provided and mocked, instead of each test running on it's own input. As a workaround to this is to add them in a constant and return that, instead of copying the same line of code multiple times, even if used simply in a console.log
+
+```
+window.getSelection()?.toString()
+mobileDeviceRegex.test(navigator.userAgent)
+```
 
 ### Other Examples
 

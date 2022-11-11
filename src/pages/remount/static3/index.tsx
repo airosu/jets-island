@@ -31,8 +31,8 @@ export const Static3: NextPage<InferGetStaticPropsType<typeof getStaticProps>> =
         console.log({ msg: 'mount', fetchedComments, isLoading })
 
         if (effectRan.current === false) {
-            // semicolon linter rule conflict with prettier
-            // eslint-disable-next-line no-extra-semi
+            // TODO: fix semicolon linter rule conflict with prettier
+            // eslint-disable-next-line @typescript-eslint/no-extra-semi
             ;(async () => {
                 setIsLoading(true)
                 setErrorMessage('')
@@ -54,7 +54,10 @@ export const Static3: NextPage<InferGetStaticPropsType<typeof getStaticProps>> =
                 effectRan.current = true
             }
         }
-        return () => {}
+        return () => {
+            console.log({ msg: 'Why is this here?' })
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     return (
