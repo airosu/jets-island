@@ -1,6 +1,6 @@
 import { copyTextToClipboard } from './copyTextToClipboard'
 
-const MOCK_TEXT = 'Hello world!'
+const mockText = 'Hello world!'
 const mockNavigatorWriteText = jest.fn()
 
 describe('copyTextToClipboard()', () => {
@@ -17,8 +17,8 @@ describe('copyTextToClipboard()', () => {
 
         expect(mockNavigatorWriteText).toHaveBeenCalledTimes(0)
 
-        copyTextToClipboard(MOCK_TEXT)
+        copyTextToClipboard(mockText)
         expect(mockNavigatorWriteText).toHaveBeenCalledTimes(1)
-        expect(mockNavigatorWriteText).toHaveBeenCalledWith(MOCK_TEXT)
+        expect(mockNavigatorWriteText).toHaveBeenCalledWith(mockText)
     })
 })
