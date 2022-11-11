@@ -6,4 +6,4 @@
  * removeDuplicates([1, 1, 2, 1, 2, 3, 1]) // => [1, 2, 3]
  */
 
-export const removeDuplicates = <T>(arr: T[]) => [...Array.from(new Set(arr))]
+export const removeDuplicates = <T>(array: T[]) => [...Array.from(new Set(array))]
