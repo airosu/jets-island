@@ -12,4 +12,5 @@ export const generateRandomHexColor = () =>
 
 // TODO: add # to character "hash" locales
 // TODO: rename this to "get" instead of "generate"? to be consistent with random utils
-// TODO: remove this comment
+// TODO: 1. random number generator in range, 2. use that to create a random RGB generator
+// TODO: also hex to RGB converter
