@@ -3,9 +3,15 @@ export const insertSubstring = (string: string, position: string, substring: str
 
     const index = string.indexOf(position)
     const stringBeforeIndex = string.slice(0, index)
-    const result = stringBeforeIndex + substring + string.slice(index)
-
     const isException = exceptions.filter((value) => stringBeforeIndex.includes(value)).length > 0
 
-    return isException ? string : result
+    if (isException) {
+        return string
+    }
+
+    if (stringBeforeIndex.endsWith('/')) {
+        return stringBeforeIndex + 'custom' + substring + string.slice(index)
+    }
+
+    return stringBeforeIndex + substring + string.slice(index)
 }

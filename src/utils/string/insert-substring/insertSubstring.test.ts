@@ -13,6 +13,9 @@ const mockString2 =
 const mockString3 =
     'https://lc-imageresizer-live-s.legocdn.com/resize/15_ugc.png?width=1488&imageUrl=...%2fugc%2f15_ugc.jpg%3fl.r%3d3358?73337'
 
+const mockString69 =
+    'https://lc-imageresizer-live-s.legocdn.com/resize/?width=720&imageUrl=htt...022%2fdots_mobile.png%3fl.r%3d437336803'
+
 describe('insertSubstring()', () => {
     it('should just work', () => {
         expect(insertSubstring(mockString1, '?', '.png')).toBe(
@@ -26,6 +29,12 @@ describe('insertSubstring()', () => {
         )
         expect(insertSubstring(mockString3, '?', '.gif')).toBe(
             'https://lc-imageresizer-live-s.legocdn.com/resize/15_ugc.png?width=1488&imageUrl=...%2fugc%2f15_ugc.jpg%3fl.r%3d3358?73337',
+        )
+    })
+
+    it('should also add the full file name, why not', () => {
+        expect(insertSubstring(mockString69, '?', '.png')).toBe(
+            'https://lc-imageresizer-live-s.legocdn.com/resize/custom.png?width=720&imageUrl=htt...022%2fdots_mobile.png%3fl.r%3d437336803',
         )
     })
 })
