@@ -5,13 +5,17 @@ export const insertSubstring = (string: string, position: string, substring: str
     const stringBeforeIndex = string.slice(0, index)
     const isException = exceptions.filter((value) => stringBeforeIndex.includes(value)).length > 0
 
-    if (isException) {
-        return string
+    if (stringBeforeIndex.includes('lc-imageresizer-live-s.legocdn.com/resize')) {
+        if (isException) {
+            return string
+        }
+
+        if (stringBeforeIndex.endsWith('/')) {
+            return stringBeforeIndex + 'custom' + substring + string.slice(index)
+        }
+
+        return stringBeforeIndex + substring + string.slice(index)
     }
 
-    if (stringBeforeIndex.endsWith('/')) {
-        return stringBeforeIndex + 'custom' + substring + string.slice(index)
-    }
-
-    return stringBeforeIndex + substring + string.slice(index)
+    return string
 }

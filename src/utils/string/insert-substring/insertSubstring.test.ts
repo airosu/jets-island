@@ -37,4 +37,13 @@ describe('insertSubstring()', () => {
             'https://lc-imageresizer-live-s.legocdn.com/resize/custom.png?width=720&imageUrl=htt...022%2fdots_mobile.png%3fl.r%3d437336803',
         )
     })
+
+    it('should not bother other links', () => {
+        const link1 = 'https://www.lego.com/kids/static/LEGO.svg'
+        const link2 =
+            'https://www.lego.com/r/www/r/portals/-/media/campaigns/kids/dots/2022/august-update/41_stitch_disney_700_aug22.gif?l.r=1660806626'
+
+        expect(insertSubstring(link1, '?', '.png')).toBe(link1)
+        expect(insertSubstring(link2, '?', '.png')).toBe(link2)
+    })
 })
