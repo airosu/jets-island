@@ -6,7 +6,10 @@ import { includesSubstring } from './includesSubstring'
 
 describe('includesSubstring()', () => {
     it('should return "true" if substring is present', () => {
-        const URL_DOTS = 'https://www.lego.com/en-us/kids/campaigns/dots'
-        expect(includesSubstring(URL_DOTS, '/kids/campaigns/dots')).toBe(true)
+        expect(includesSubstring('https://placehold.jp/150x150.png', '150x150')).toBe(true)
+    })
+
+    it('should return "false" if substring is not found', () => {
+        expect(includesSubstring('https://placehold.jp/150x150.png', 'www')).toBe(false)
     })
 })

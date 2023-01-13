@@ -4,6 +4,17 @@
 
 import { insertSubstring } from './insertSubstring'
 
+// const mockBaseHost = 'lc-imageresizer-live-s.placeholdcdn.jp/resize'
+
+// const mockUrlWithFileName = `https://${mockBaseHost}/15_ugc?width=720`
+// const mockUrlWithFileExtension = `https://${mockBaseHost}/15_ugc.jpeg?width=720`
+// const mockUrlWithMultiplePositionTargets = `https://${mockBaseHost}/15_ugc?width=720?x`
+// const mockUrlWithoutFileName = `https://${mockBaseHost}/?width=720`
+// const mockUrlWithoutCondition = 'https://placehold.jp/150x150?width=150'
+
+// const mockHost = 'lc-imageresizer-live-s.placeholdcdn.jp'
+// const mockPath1 = `https://${mockHost}/resize`
+
 const mockString1 =
     'https://lc-imageresizer-live-s.legocdn.com/resize/15_ugc?width=1488&imageUrl=...%2fugc%2f15_ugc.jpg%3fl.r%3d3358?73337'
 
