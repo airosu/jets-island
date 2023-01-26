@@ -9,6 +9,6 @@ if [ "$branch" = "master" ]; then
   exit 1
 fi
 
+yarn test:affected
 yarn lint
 yarn prettier
-yarn test:affected
