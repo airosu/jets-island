@@ -1,5 +1,8 @@
-// import { getFileExtension } from 'utils/string/get-file-extension/getFileExtension'
+import { Behavior } from 'utils/string/insert-substring/insertSubstring.constants'
+import { doesPathContainFilename } from 'utils/string/insert-substring/insertSubstring.utils'
+import { trimUrlParams } from 'utils/string/trim-url-params/trimUrlParams'
 
+// TODO: Delete this
 export const insertSubstring = (string: string, position: string, substring: string) => {
     const exceptions = ['.jpeg', '.png']
 
@@ -7,7 +10,7 @@ export const insertSubstring = (string: string, position: string, substring: str
     const stringBeforeIndex = string.slice(0, index)
     const isException = exceptions.filter((value) => stringBeforeIndex.includes(value)).length > 0
 
-    if (stringBeforeIndex.includes('lc-imageresizer-live-s.legocdn.com/resize')) {
+    if (stringBeforeIndex.includes('lc-imageresizer-live-s.placeholdcdn.jp/resize')) {
         if (isException) {
             return string
         }
@@ -22,58 +25,40 @@ export const insertSubstring = (string: string, position: string, substring: str
     return string
 }
 
-// TODO: clean this up
-type InsertSubstring = {
-    url: string
-    fileName: string
-    fileExtension: string
-    condition?: string
-    exceptions?: string[]
-}
-
 /**
- * Add filename and extension to a path. Will add it before the first url param (before the "?" symbol).
+ * Add filename and extension to a path. If the path contains url params, it will add it before the first one (before the "?" symbol).
+ *
+ * If the path ends with "/", the provided filename will be added after the slash; if not, the following
+ * behaviors will be occur:
+ *   - *Append*: adds a "/" followed by the filename;
+ *   - *Replace*: removes the string after the last "/" and replaces it with the provided filename;
+ *   - *Preserve*: keeps the string after the last "/" and only adds the provided filename extension.
  */
 
-export const insertFileNameToUrl_0 = ({
-    url,
-    // fileName,
-    fileExtension,
-    condition,
-    exceptions = [],
-}: InsertSubstring) => {
-    // TODO: Add "?" to locales?
-    const index = url.indexOf('?')
-    const stringBeforeIndex = url.slice(0, index)
-    const isException = exceptions.filter((value) => stringBeforeIndex.includes(value)).length > 0
-    const hasCondition = condition !== undefined
+export const insertFileNameToPath = (path: string, fileName: string, behavior: Behavior = Behavior.APPEND) => {
+    const trimmedPath = trimUrlParams(path)
+    const trimmedPathWithoutTrailingSlash = trimmedPath.endsWith('/')
+        ? trimmedPath.substring(0, trimmedPath.length - 1)
+        : trimmedPath
+    const pathWithoutTrailingSlash = path.endsWith('/') ? path.substring(0, path.length - 1) : path
 
-    if (hasCondition && stringBeforeIndex.includes(condition)) {
-        if (isException) {
-            return url
-        }
-
-        if (stringBeforeIndex.endsWith('/')) {
-            return stringBeforeIndex + 'custom' + fileExtension + url.slice(index)
+    // TODO: implement logic for "replace" and "preserve" behaviors
+    // TODO: consider adding logic for only file extension, without name
+    if (behavior === Behavior.REPLACE) {
+        return '--WIP--'
+    } else if (behavior === Behavior.PRESERVE) {
+        return '--WIP--'
+    } else {
+        if (path.includes('?')) {
+            if (doesPathContainFilename(trimmedPathWithoutTrailingSlash)) {
+                return `${trimmedPathWithoutTrailingSlash}${path.slice(path.indexOf('?'))}`
+            }
+            return `${trimmedPathWithoutTrailingSlash}/${fileName}${path.slice(path.indexOf('?'))}`
+        } else {
+            if (doesPathContainFilename(pathWithoutTrailingSlash)) {
+                return pathWithoutTrailingSlash
+            }
+            return `${pathWithoutTrailingSlash}/${fileName}`
         }
     }
-
-    return 1
 }
-
-export type Options = {
-    keepOriginalFilename?: boolean
-}
-
-/**
- * Add filename and extension to a path. Will add it before the first url param (before the "?" symbol).
- */
-
-// export const insertFileNameToUrl = (url: string, fileName: string, options?: Options) => {
-//     const fileExtension = getFileExtension(fileName)
-//     // TODO: Add "?" to locales?
-//     const index = url.indexOf('?')
-//     const stringBeforeIndex = url.slice(0, index)
-
-//     return 1
-// }
