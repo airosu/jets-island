@@ -26,7 +26,13 @@ This section will include all steps and packages needed to setup the codebase.
 
 ### Installation
 
-First, the next.js project needs to be initialized. Make sure you have node installed locally, then run the create-next-app command with the --ts flag, for TypeScript. You can also add the . if you wish to install in the current folder, instead of creating a new one.
+First, the next.js project needs to be initialized. Make sure you have node installed locally, then run the create-next-app command with the --typescript / --ts flag. You can also add the . if you wish to install in the current folder, instead of creating a new one.
+
+```
+yarn create next-app --typescript .
+```
+
+or if you want to use npm:
 
 ```
 npx create-next-app@latest --ts .
